@@ -77,6 +77,30 @@ func check_boards_fit(dimensions: Vector2i) -> void:
 			check(Rect2(Vector2.ZERO,Vector2(dimensions)).has_point(screen), "3D board corner fits " + str(dimensions))
 			var pick: Dictionary = scene._board_pick(screen)
 			check(not pick.is_empty() and pick.cell == p and pick.enemy == enemy, "3D projection ray-pick round trip")
+func check_shot_markers() -> void:
+	var shots: Array = scene.net.state.shots
+	check(scene.shot_node.get_child_count() == shots.size(), "one flat marker per public shot")
+	var planar := true
+	var positioned := true
+	var colors := true
+	var own_hits := 0
+	var enemy_hits := 0
+	var misses := 0
+	for i in range(mini(shots.size(),scene.shot_node.get_child_count())):
+		var shot: Dictionary = shots[i]
+		var mark: MeshInstance3D = scene.shot_node.get_child(i)
+		var center: Vector3 = scene.enemy_center if shot.by == scene._player() else scene.own_center
+		planar = planar and mark.mesh is PlaneMesh and mark.get_child_count() == 0 and mark.rotation.is_zero_approx() and mark.scale.is_equal_approx(Vector3.ONE)
+		positioned = positioned and mark.position.is_equal_approx(center+Vector3(shot.x-4.5,.025,shot.y-4.5))
+		colors = colors and mark.material_override.get_shader_parameter("mark_color") == (scene.SHOT_HIT if shot.hit else scene.SHOT_MISS) and mark.material_override.get_shader_parameter("hit") == shot.hit
+		if not shot.hit: misses += 1
+		elif shot.by == scene._player(): enemy_hits += 1
+		else: own_hits += 1
+	check(planar, "shot geometry is only horizontal planes, no arrows or vertical markers")
+	check(positioned, "all shot markers stay centered on their grid cells at y=0.025")
+	check(colors, "all misses blue and all own, enemy and sunk hits red")
+	check(own_hits > 0 and enemy_hits > 0 and misses > 0, "capture covers own hits, enemy hits and misses")
+	check("depth_test_disabled" in scene.SHOT_CELL_SHADER.code, "planar shot overlays remain readable through own hulls")
 func run() -> void:
 	if DisplayServer.get_name() == "headless":
 		push_error("Requires existing desktop display")
@@ -165,11 +189,7 @@ func run() -> void:
 	await until(func(): return scene.net.state.turn == 0)
 	await frames(45)
 	await capture("battleship-battle")
-	for shot in scene.net.state.shots:
-		if shot.by == 1 and shot.hit and shot.y == 1:
-			check(scene._hit_elevation(shot) > 1.5, "own liner hit rises above tall vessel deck")
-		if shot.by == 0 and shot.hit and shot.sunk < 0 and shot.y < 8:
-			check(is_equal_approx(scene._hit_elevation(shot),.63), "unknown enemy hit keeps generic elevation")
+	check_shot_markers()
 	check(scene.net.state.sunk_enemy.size() == 1, "sunk enemy ship publicly revealed")
 	check(scene.enemy_fleet_node.get_child_count() == 1, "only sunk enemy vessel is instantiated")
 	var before: int = scene.net.state.shots.size()

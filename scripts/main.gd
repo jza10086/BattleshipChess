@@ -11,6 +11,9 @@ const CREAM := Color("f1e8cd")
 const INK := Color("254c55")
 const AQUA := Color("9fe0cc")
 const CORAL := Color("de7850")
+const SHOT_HIT := Color("eb5353")
+const SHOT_MISS := Color("398fec")
+const SHOT_CELL_SHADER = preload("res://assets/shaders/shot_cell.gdshader")
 var net = NetworkModel.new()
 var draft: Array = []
 var selected := -1
@@ -324,9 +327,6 @@ func _process(delta: float) -> void:
 		effect.material.albedo_color.a = maxf(0,.55*(1.0-effect.age))
 		if effect.age>=1.0: effect.node.queue_free()
 	effects = effects.filter(func(effect): return effect.age<1.0)
-	for flame in shot_node.get_children():
-		if flame.has_meta("flame"):
-			flame.scale.y = 1.0+sin(Time.get_ticks_msec()*.006+flame.position.x)*.08
 	if get_viewport().get_visible_rect().size != viewport_size: _layout()
 	if shot_pending and Time.get_ticks_msec()-shot_pending_at > 2500: shot_pending = false
 	_update_hover(delta)
@@ -365,7 +365,9 @@ func _state_changed(state: Dictionary) -> void:
 		for i in range(last_shots,shots.size()):
 			var shot: Dictionary = shots[i]
 			var center := enemy_center if int(shot.by)==_player() else own_center
-			var ring := _ring(effects_node,center+Vector3(shot.x-4.5,.07,shot.y-4.5),.23,Color(.94,.96,.85,.55))
+			var color := SHOT_HIT if shot.hit else SHOT_MISS
+			color.a = .55
+			var ring := _ring(effects_node,center+Vector3(shot.x-4.5,.07,shot.y-4.5),.23,color)
 			effects.append({"node":ring,"material":ring.material_override,"age":0.0})
 	last_shots = shots.size()
 	_rebuild_fleets()
@@ -413,39 +415,25 @@ func _ship_position(ship: Dictionary) -> Vector3:
 func _rebuild_shots() -> void:
 	if shot_node == null: return
 	_clear(shot_node)
+	var plane := PlaneMesh.new()
+	plane.size = Vector2(.96,.96)
+	var materials: Array[ShaderMaterial] = []
+	for hit in [false,true]:
+		var material := ShaderMaterial.new()
+		material.shader = SHOT_CELL_SHADER
+		material.set_shader_parameter("mark_color",SHOT_HIT if hit else SHOT_MISS)
+		material.set_shader_parameter("hit",hit)
+		material.render_priority = 2
+		materials.append(material)
 	for shot in net.state.get("shots",[]):
 		var center := enemy_center if int(shot.by)==_player() else own_center
-		var pos := center+Vector3(shot.x-4.5,.055,shot.y-4.5)
-		if shot.hit:
-			var elevation := _hit_elevation(shot)
-			# A small geometric ember stays readable over the ship; no particle shower or text.
-			var flame := MeshInstance3D.new()
-			var mesh := PrismMesh.new()
-			mesh.size = Vector3(.24,.55,.24)
-			flame.mesh = mesh
-			flame.material_override = Vessel.material(CORAL)
-			flame.position = pos+Vector3(0,elevation,0)
-			flame.set_meta("flame",true)
-			shot_node.add_child(flame)
-			var ember := _box(shot_node,Vector3(.19,.13,.19),pos+Vector3(0,elevation-.24,0),Vessel.material(Color("f5c56f")))
-			ember.rotation.y = PI*.25
-		else:
-			_ring(shot_node,pos,.18,Color(.86,.96,.89,.80))
-
-func _hit_elevation(shot: Dictionary) -> float:
-	# Tall glTF decks must never occlude the only visible hit feedback.
-	var enemy: bool = int(shot.by)==_player()
-	var visible_fleet: Array = draft
-	if enemy:
-		visible_fleet = net.state.get("enemy_fleet",[]) if _phase()=="finished" else net.state.get("sunk_enemy",[])
-	for ship in visible_fleet:
-		if Vector2i(shot.x,shot.y) not in Rules.ship_cells(ship): continue
-		var index: int = int(ship.get("index",0))
-		var bounds: Vector3 = Vessel.BOUNDS[index]
-		var top := bounds.y*minf((LENGTHS[index]-.18)/bounds.z,.53)-.13
-		if known_sunk.has(str(enemy)+str(index)): top -= .47
-		return maxf(.63,top+.28)
-	return .63
+		var mark := MeshInstance3D.new()
+		mark.mesh = plane
+		mark.material_override = materials[1 if shot.hit else 0]
+		# No ship-dependent height, geometry or coloring: every mark stays on its cell.
+		mark.position = center+Vector3(shot.x-4.5,.025,shot.y-4.5)
+		mark.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		shot_node.add_child(mark)
 
 func _ring(parent: Node3D, pos: Vector3, radius: float, color: Color) -> MeshInstance3D:
 	var node := MeshInstance3D.new()

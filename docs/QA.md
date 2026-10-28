@@ -107,6 +107,8 @@ The native suite has a 180-second deadline with peer cleanup. It uses UDP port
   after one enemy vessel sinks, then none again on rematch. Network privacy is
   independently covered by the real-process snapshot tests above.
 - Live hit, miss, sink and duplicate rejection; placement controls disappear in battle.
+- One horizontal plane per public shot, centered on its cell at y=0.025; blue
+  misses and red own/enemy/sunk hits. No arrow, flame or raised hit geometry.
 - 1280×720, 960×960, 720×960 and 640×480 live layouts; deployment action fit at
   720×960 and 640×480; true 3D board corners inside every viewport; projection-to-ray
   picking round trips; open/close menu and F11 full-screen round trip.
@@ -116,7 +118,7 @@ The native suite has a 180-second deadline with peer cleanup. It uses UDP port
 At the battle capture, the suite prints FPS, process time, draw calls and rendered
 primitives to the external test log only, never on the gameplay screen.
 
-At the optimized full-suite 1280×720 battle checkpoint on Mesa llvmpipe software
+Before the flat-cell marker update, at the full-suite 1280×720 battle checkpoint on Mesa llvmpipe software
 rendering (two CPU cores), the measured values were **7 FPS**, **147.303 ms** process
 time, **120 draw calls** and **13,622 primitives**. A subsequent final hit-visibility
 regression capture measured **6 FPS / 161.444 ms**, with the same draw-call and
@@ -124,14 +126,20 @@ primitive counts. These are individual checkpoints, not averaged benchmarks or
 performance claims for hardware GPUs. The software renderer is not a 60 FPS
 environment; hardware GPU performance remains unmeasured.
 
-After the full suite, visual review found tall ocean-liner decks occluding hit
-markers. A focused real two-process native rerun verified the final elevation fix:
-four friendly liner hits are above the deck, unknown enemy hit elevations stay
-generic (no hidden ship-type disclosure), and only the public sunk enemy vessel
-is instantiated. The corrected battle screenshot was inspected and the targeted
-run reported `TARGETED_HIT_CAPTURE_RESULT PASS`; both peers closed cleanly. These
-height assertions are retained in the regular native test. The full network and
-victory/rematch suites were not repeated after this rendering-only fix.
+The latest rendering-only update replaces raised hit geometry and pale miss rings
+with flat red/blue cell stencils. A focused real two-process native run on
+2026-10-28 passed marker counts, plane-only geometry, grid placement and colors,
+duplicate-shot rejection, and hidden-enemy checks. Both 1280×720 and 720×960
+captures were inspected: four friendly liner hits remain legible through the
+hull, blue misses are distinct, and the only revealed enemy vessel is already
+sunk with its cells still red. The depth-disabled translucent stencil is limited
+to public shot cells and never samples enemy fleet data. The native run reported
+`FLAT_SHOT_CAPTURE_RESULT PASS` and both peers closed cleanly. These marker
+assertions replace the obsolete height checks in the regular native test.
+
+Godot 4.7.2 import and all 529 deterministic rule checks were rerun successfully.
+The full network and victory/rematch suites were not repeated for this cosmetic
+change; `rules.gd` and `network.gd` are unchanged.
 
 The recorded native run uses the existing dot cloud desktop with Mesa software
 OpenGL, not a new X server. It may report a driver V-Sync warning outside the game;
