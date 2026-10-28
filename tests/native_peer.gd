@@ -24,7 +24,7 @@ func run() -> void:
 func fleet() -> Array:
 	return [{"x":1,"y":1,"vertical":true},{"x":4,"y":1,"vertical":false},{"x":3,"y":5,"vertical":false},{"x":8,"y":4,"vertical":true},{"x":5,"y":8,"vertical":false}]
 func step() -> void:
-	if Time.get_ticks_msec() - started > 120000:
+	if Time.get_ticks_msec() - started > 180000:
 		quit(1)
 	if not net.connected or net.state.is_empty(): return
 	var state: Dictionary = net.state

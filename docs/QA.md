@@ -64,8 +64,8 @@ any previous player's fleet or readiness.
 - Date: **2026-10-28** (UTC).
 - **529 deterministic rule checks** and **1,851 real-process network checks** passed with no script errors.
 - Both network scenarios passed. The final native desktop run also reported
-  `NATIVE_UI_RESULT PASS`, including the complete match/rematch, compact selector
-  non-overlap, cancellation, four window sizes and F11 checks described below.
+  `NATIVE_UI_RESULT PASS`, including the complete match/rematch, 3D projection/picking,
+  cancellation, four window sizes and F11 checks described below.
 
 ### Scope and limitations
 
@@ -78,8 +78,9 @@ not a cryptographic anti-cheat system against a malicious host.
 
 ## Native desktop rendering and input
 
-`tests/native_capture.gd` is a bounded native-window run. It opens the normal main
-scene, clicks the actual controls and grids via Godot input events, and launches
+`tests/native_capture.gd` is a bounded native-window run. It opens the normal
+**Node3D / Camera3D** main scene, clicks and drags the actual controls and projected
+grids via Godot input events, and launches
 `tests/native_peer.gd` as a separate headless ENet participant. Both scripts live
 only under `tests/`; no test driver runs in the normal game. Fleet locations and
 shot choices are deterministic test-player intentions, not forged snapshots or
@@ -93,16 +94,44 @@ BATTLE_CAPTURE_DIR=/absolute/path/to/screenshots \
   --script res://tests/native_capture.gd
 ```
 
-The native suite uses UDP port 19777 for its actual match and 19778 for canceled
-connection attempts. Run it only when these ports are unused. It verifies:
+The native suite has a 180-second deadline with peer cleanup. It uses UDP port
+19777 for its actual match and 19778 for canceled connection attempts. Run it only when these ports are unused. It verifies:
 
-- Entry, real host creation, second-process handshake, mouse fleet placement.
-- R/right-click rotation, selecting/repositioning a vessel, and fleet readiness.
+- Entry, real host creation, second-process handshake, and a valid editable default fleet.
+- Keyboard selection, R/right-click rotation, projected-grid placement, actual drag /
+  repeat-drag repositioning, and moving across a vessel's previous own footprint.
+- Readiness is hidden while a vessel preview is selected; invalid placement cannot
+  replace the saved fleet or expose readiness; Escape restores the saved valid
+  fleet and its ready action.
+- No hidden enemy vessel meshes instantiated before any sinking; exactly one mesh
+  after one enemy vessel sinks, then none again on rematch. Network privacy is
+  independently covered by the real-process snapshot tests above.
 - Live hit, miss, sink and duplicate rejection; placement controls disappear in battle.
 - 1280×720, 960×960, 720×960 and 640×480 live layouts; deployment action fit at
-  720×960 and 640×480; open/close menu and F11 full-screen round trip.
+  720×960 and 640×480; true 3D board corners inside every viewport; projection-to-ray
+  picking round trips; open/close menu and F11 full-screen round trip.
 - Real final victory, both rematch requests, clean deployment state, and host exit.
 - Repeated connection attempts can be canceled using the entry button or Esc.
+
+At the battle capture, the suite prints FPS, process time, draw calls and rendered
+primitives to the external test log only, never on the gameplay screen.
+
+At the optimized full-suite 1280×720 battle checkpoint on Mesa llvmpipe software
+rendering (two CPU cores), the measured values were **7 FPS**, **147.303 ms** process
+time, **120 draw calls** and **13,622 primitives**. A subsequent final hit-visibility
+regression capture measured **6 FPS / 161.444 ms**, with the same draw-call and
+primitive counts. These are individual checkpoints, not averaged benchmarks or
+performance claims for hardware GPUs. The software renderer is not a 60 FPS
+environment; hardware GPU performance remains unmeasured.
+
+After the full suite, visual review found tall ocean-liner decks occluding hit
+markers. A focused real two-process native rerun verified the final elevation fix:
+four friendly liner hits are above the deck, unknown enemy hit elevations stay
+generic (no hidden ship-type disclosure), and only the public sunk enemy vessel
+is instantiated. The corrected battle screenshot was inspected and the targeted
+run reported `TARGETED_HIT_CAPTURE_RESULT PASS`; both peers closed cleanly. These
+height assertions are retained in the regular native test. The full network and
+victory/rematch suites were not repeated after this rendering-only fix.
 
 The recorded native run uses the existing dot cloud desktop with Mesa software
 OpenGL, not a new X server. It may report a driver V-Sync warning outside the game;

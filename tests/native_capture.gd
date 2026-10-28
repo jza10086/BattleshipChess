@@ -19,6 +19,8 @@ func until(predicate: Callable, duration := 10.0) -> bool:
 		await process_frame
 	return false
 func capture(name: String) -> void:
+	if name == "battleship-battle":
+		print("NATIVE_RENDER_METRICS fps=", Engine.get_frames_per_second(), " process_ms=", Performance.get_monitor(Performance.TIME_PROCESS)*1000, " draw_calls=", Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME), " primitives=", Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))
 	await RenderingServer.frame_post_draw
 	check(root.get_texture().get_image().save_png(output.path_join(name + ".png")) == OK, "capture " + name)
 func click(pos: Vector2, button := MOUSE_BUTTON_LEFT) -> void:
@@ -43,8 +45,38 @@ func key(code: int) -> void:
 		Input.flush_buffered_events()
 		await frames(2)
 func board_click(x: int,y: int, enemy := false) -> void:
-	var board: Rect2 = scene.enemy_rect if enemy else scene.own_rect
-	await click(board.position + (Vector2(x,y)+Vector2.ONE*.5)*scene.cell)
+	await click(scene.cell_screen(x,y,enemy))
+func drag_cell(from: Vector2i, to: Vector2i) -> void:
+	var start: Vector2 = scene.cell_screen(from.x,from.y)
+	var end: Vector2 = scene.cell_screen(to.x,to.y)
+	var press := InputEventMouseButton.new()
+	press.position = start
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	Input.parse_input_event(press)
+	Input.flush_buffered_events()
+	await frames(3)
+	var motion := InputEventMouseMotion.new()
+	motion.position = end
+	motion.relative = end-start
+	motion.button_mask = MOUSE_BUTTON_MASK_LEFT
+	Input.parse_input_event(motion)
+	Input.flush_buffered_events()
+	await frames(5)
+	var release := InputEventMouseButton.new()
+	release.position = end
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	Input.parse_input_event(release)
+	Input.flush_buffered_events()
+	await frames(5)
+func check_boards_fit(dimensions: Vector2i) -> void:
+	for enemy in [false,true]:
+		for p in [Vector2i(0,0),Vector2i(9,0),Vector2i(0,9),Vector2i(9,9)]:
+			var screen: Vector2 = scene.cell_screen(p.x,p.y,enemy)
+			check(Rect2(Vector2.ZERO,Vector2(dimensions)).has_point(screen), "3D board corner fits " + str(dimensions))
+			var pick: Dictionary = scene._board_pick(screen)
+			check(not pick.is_empty() and pick.cell == p and pick.enemy == enemy, "3D projection ray-pick round trip")
 func run() -> void:
 	if DisplayServer.get_name() == "headless":
 		push_error("Requires existing desktop display")
@@ -54,6 +86,7 @@ func run() -> void:
 	if output.is_empty():
 		quit(1)
 		return
+	get_tree_watchdog()
 	DirAccess.make_dir_recursive_absolute(output)
 	root.size = Vector2i(1280,720)
 	scene = load("res://scenes/main.tscn").instantiate()
@@ -67,38 +100,61 @@ func run() -> void:
 	peer_pid = OS.create_process(OS.get_executable_path(), ["--headless","--path",ProjectSettings.globalize_path("res://"),"--script","res://tests/native_peer.gd"])
 	check(peer_pid > 0, "separate ENet client process")
 	check(await until(func(): return scene.net.opponent_present), "client admitted")
+	check(scene is Node3D and scene.camera is Camera3D, "actual Node3D camera scene")
+	check(Rules.fleet_valid(scene.draft), "default fleet starts valid")
+	check(scene.enemy_fleet_node.get_child_count() == 0, "no hidden enemy vessel meshes in scene")
+	await key(KEY_1)
+	check(scene.selected == 0, "keyboard selects first ship")
+	check(not scene.ready_button.visible, "ready hidden while vessel preview selected")
 	await board_click(1,1)
-	check(scene.draft[0].x == 1, "click places carrier")
+	check(scene.draft[0].y == 1, "projected-grid click relocates first vessel")
+	await key(KEY_2)
 	await key(KEY_R)
-	check(scene.vertical, "R rotates next ship")
+	check(not scene.vertical, "R rotates selected vessel")
+	await click(scene.cell_screen(7,2), MOUSE_BUTTON_RIGHT)
+	check(scene.vertical, "right button rotates selected vessel back")
 	await board_click(7,2)
+	await key(KEY_3)
 	await board_click(2,5)
-	await click(scene.own_rect.position + Vector2(15,15), MOUSE_BUTTON_RIGHT)
-	check(scene.vertical, "right button rotates")
+	await key(KEY_4)
+	await click(scene.cell_screen(0,6), MOUSE_BUTTON_RIGHT)
 	await board_click(0,6)
+	await key(KEY_5)
 	await board_click(6,8)
-	check(Rules.fleet_valid(scene.draft), "five ships valid through mouse and keys")
-	# Pick and reposition an existing ship, then restore it through the same input path.
+	check(Rules.fleet_valid(scene.draft), "five ships valid through projected clicks and keys")
+	await drag_cell(Vector2i(6,8),Vector2i(5,8))
+	check(scene.draft[4].x == 5, "direct drag moves placed vessel")
+	await drag_cell(Vector2i(5,8),Vector2i(6,8))
+	check(scene.draft[4].x == 6, "repeat drag repositions vessel")
+	await key(KEY_5)
+	await board_click(7,8)
+	check(scene.draft[4].x == 7 and scene.selected == -1, "second click places across previous own footprint")
+	await key(KEY_5)
 	await board_click(6,8)
-	check(scene.selected == 4, "placed ship is selectable")
-	await board_click(5,8)
-	check(scene.draft[4].x == 5, "placed ship can be repositioned")
-	await board_click(5,8)
-	await board_click(6,8)
+	check(scene.draft[4].x == 6, "click repositions vessel back")
+	# Escape cancels a lifted preview without changing the authoritative draft.
+	var before_cancel: Array = scene.draft.duplicate(true)
+	await key(KEY_1)
+	await key(KEY_R)
+	await board_click(9,9)
+	check(scene.draft == before_cancel and scene.selected == 0 and not scene.ready_button.visible, "invalid preview cannot replace draft or submit readiness")
+	await key(KEY_ESCAPE)
+	check(scene.selected == -1 and scene.draft == before_cancel, "Escape cancels lifted/rotated preview")
+	check(scene.ready_button.visible, "Escape restores ready action for saved valid fleet")
 	await frames(20)
 	await capture("battleship-placement")
 	for dimensions in [Vector2i(720,960),Vector2i(640,480)]:
 		root.size = dimensions
 		await frames(12)
 		check(scene.ready_button.position.y + scene.ready_button.size.y < root.size.y - 20, "placement actions fit " + str(dimensions))
-		for i in range(4):
-			check(scene.fleet_buttons[i].position.x + scene.fleet_buttons[i].size.x <= scene.fleet_buttons[i+1].position.x, "ship selector has no overlap " + str(i))
+		check_boards_fit(dimensions)
 		await capture("battleship-placement-%dx%d" % [dimensions.x,dimensions.y])
 	root.size = Vector2i(1280,720)
 	await frames(10)
 	await click(scene.ready_button.position + scene.ready_button.size/2)
 	check(await until(func(): return scene.net.state.get("phase", "") == "battle"), "both ready starts battle")
-	check(not scene.auto_button.visible and not scene.fleet_buttons[0].visible, "placement controls hidden in battle")
+	check(not scene.ready_button.visible and not scene.auto_button.visible, "placement controls hidden in battle")
+	check(scene.enemy_fleet_node.get_child_count() == 0, "enemy mesh remains hidden at battle start")
 	var targets := [Vector2i(0,0),Vector2i(5,8),Vector2i(6,8),Vector2i(1,1),Vector2i(1,2),Vector2i(9,3),Vector2i(4,1)]
 	for p in targets:
 		check(await until(func(): return scene.net.state.turn == 0), "our turn arrives")
@@ -109,14 +165,20 @@ func run() -> void:
 	await until(func(): return scene.net.state.turn == 0)
 	await frames(45)
 	await capture("battleship-battle")
+	for shot in scene.net.state.shots:
+		if shot.by == 1 and shot.hit and shot.y == 1:
+			check(scene._hit_elevation(shot) > 1.5, "own liner hit rises above tall vessel deck")
+		if shot.by == 0 and shot.hit and shot.sunk < 0 and shot.y < 8:
+			check(is_equal_approx(scene._hit_elevation(shot),.63), "unknown enemy hit keeps generic elevation")
 	check(scene.net.state.sunk_enemy.size() == 1, "sunk enemy ship publicly revealed")
+	check(scene.enemy_fleet_node.get_child_count() == 1, "only sunk enemy vessel is instantiated")
 	var before: int = scene.net.state.shots.size()
 	await board_click(0,0,true)
 	check(scene.net.state.shots.size() == before, "duplicate click cannot advance turn")
 	for dimensions in [Vector2i(960,960),Vector2i(720,960),Vector2i(640,480)]:
 		root.size = dimensions
 		await frames(15)
-		check(scene.enemy_rect.end.x <= root.size.x and scene.enemy_rect.end.y < root.size.y - 35, "boards fit " + str(dimensions))
+		check_boards_fit(dimensions)
 		await capture("battleship-battle-%dx%d" % [dimensions.x,dimensions.y])
 	root.size = Vector2i(1280,720)
 	await frames(10)
@@ -143,13 +205,14 @@ func run() -> void:
 	await capture("battleship-victory")
 	await click(scene.rematch_button.position + scene.rematch_button.size/2)
 	check(await until(func(): return scene.net.state.phase == "placement"), "both rematch votes return to deployment")
-	check(scene.draft[0].x == -1 and scene.net.state.shots.is_empty(), "new-round UI clears own placements and shots")
+	check(Rules.fleet_valid(scene.draft) and scene.net.state.shots.is_empty() and not scene.net.state.own_ready, "new-round UI resets editable fleet and clears shots")
+	check(scene.enemy_fleet_node.get_child_count() == 0, "rematch removes revealed enemy vessel meshes")
 	scene.net.leave()
 	check(await until(func(): return not OS.is_process_running(peer_pid)), "host exit ends separate client")
 	# Repeat and cancel joining through the real entry controls.
 	scene.port_field.value = 19778
 	await click(scene.join_button.position + scene.join_button.size/2)
-	check(scene.connecting and scene.host_button.text == "取消连接", "pending join exposes cancellation")
+	check(scene.connecting and scene.host_button.text == "取消", "pending join exposes cancellation")
 	await click(scene.host_button.position + scene.host_button.size/2)
 	check(not scene.connecting and not scene.net.connected, "cancel pending join restores entry")
 	await click(scene.join_button.position + scene.join_button.size/2)
@@ -157,3 +220,9 @@ func run() -> void:
 	check(not scene.connecting and not scene.net.connected, "Escape cancels repeat join")
 	print("NATIVE_UI_RESULT ", "FAIL" if failed else "PASS")
 	quit(1 if failed else 0)
+
+func get_tree_watchdog() -> void:
+	await create_timer(180).timeout
+	if peer_pid > 0 and OS.is_process_running(peer_pid): OS.kill(peer_pid)
+	push_error("NATIVE_UI_RESULT FAIL: 180-second deadline exceeded")
+	quit(1)
