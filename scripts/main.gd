@@ -4,6 +4,7 @@ const NetworkModel = preload("res://scripts/network.gd")
 const Rules = preload("res://scripts/rules.gd")
 const Vessel = preload("res://scripts/ship_visual.gd")
 const FONT = preload("res://assets/fonts/SeaInterface.otf")
+const Waterline = preload("res://scripts/waterline.gd")
 const BUOY = preload("res://assets/kenney-watercraft/buoy.glb")
 const LENGTHS := [5,4,3,3,2]
 const NAMES := ["远洋轮", "货轮", "拖轮", "工作艇", "快艇"]
@@ -119,6 +120,7 @@ func _build_world() -> void:
 	sun.shadow_bias = .035
 	add_child(sun)
 	var ocean := MeshInstance3D.new()
+	ocean.name = "Ocean"
 	var plane := PlaneMesh.new()
 	plane.size = Vector2(240,240)
 	plane.subdivide_width = 40
@@ -127,7 +129,7 @@ func _build_world() -> void:
 	ocean.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var ocean_material := ShaderMaterial.new()
 	ocean_material.shader = preload("res://assets/shaders/ocean.gdshader")
-	ocean_material.set_shader_parameter("sea_color",Color("3c8791"))
+	ocean_material.set_shader_parameter("current_fields",preload("res://assets/textures/ocean_fields.png"))
 	ocean.material_override = ocean_material
 	ocean.position.y = -.055
 	add_child(ocean)
@@ -179,6 +181,11 @@ func _board(mat: StandardMaterial3D) -> Node3D:
 			board.add_child(buoy)
 			buoy.scale = Vector3.ONE*.23
 			buoy.position = Vector3(x,0,z)
+			# Sibling at water height: hidden boards hide their buoy ripples as well.
+			var waterline := Waterline.create(Vector2(.18,.18), float(x+z))
+			waterline.name = "Waterline_%s_%s" % [x,z]
+			board.add_child(waterline)
+			waterline.position = Vector3(x,-.018,z)
 	return board
 
 func _build_ui() -> void:

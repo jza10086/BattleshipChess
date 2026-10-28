@@ -147,3 +147,68 @@ no debug messages are drawn in the game. Captures and logs are intentionally
 outside the Git project. Window resize and full-screen are verified, but mobile
 exports, web export (ENet is not browser-compatible), controllers and touch-only
 play are not claimed as tested.
+
+## Layered ocean regression (2026-10-28)
+
+The ocean update adds an original noise texture and shaders; the referee and
+network scripts remain byte-for-byte unchanged. Run the focused test on an
+existing graphical desktop:
+
+```sh
+BATTLE_CAPTURE_DIR=/absolute/path/to/ocean-captures \
+  godot --path . --rendering-method gl_compatibility \
+  --script res://tests/ocean_capture.gd
+```
+
+It uses the same separate real ENet peer and unused UDP port 19777 as the native
+suite. It exercises actual placement/ready/fire/leave intentions, not forged game
+state. In addition to the existing flat-shot assertions, it verifies:
+
+- No opponent hull or waterline before a public sink; exactly one afterward.
+- Ocean and waterline shader uniform allowlists contain no fleet/position arrays.
+- One local waterline per visible hull, four buoy waterlines per board; a lifted
+  preview stays at sea height and Escape restores its saved placement.
+- Wave height stays strictly below waterlines, stable grid and planar shot cells.
+- Opaque ocean does not use screen/depth textures; no Forward+ dependency.
+- Blue misses, red own/enemy hits and sunk-cell marks remain horizontal planes.
+- 1280×720 and 720×960 native captures; portrait projection/picking round trips.
+- Leaving destroys the revealed enemy waterline and hides enemy buoy ripples;
+  the separate peer exits cleanly.
+
+Godot 4.7.2 import and **529 deterministic rule checks** passed. The final focused
+native run reports `OCEAN_CAPTURE_RESULT PASS`, with no shader/script errors.
+The full unchanged network, victory/rematch and F11 suites were not rerun for this
+cosmetic update; their earlier results above must not be read as a new full pass.
+
+For a six-second rendered motion sample, add `--fixed-fps 20` and the environment
+variable `OCEAN_CAPTURE_MOTION=1`. The native test saves 120 consecutive viewport
+frames and checks that a hull-free open-water pixel region changes. Fixed-step
+capture is an offline visual test, **not** evidence of real-time 20 FPS performance.
+The recorded motion run also reports `OCEAN_CAPTURE_RESULT PASS`: all 120 frames
+were saved, and its open-water change metric was 176.392 (threshold > 10).
+The six-second, 20 FPS GIF is encoded from these actual frames, not generated art
+or interpolation.
+Captures, the original-shader comparison fixture and logs stay outside the repo.
+
+### Software-renderer comparison
+
+Same 1280×720 scene, same process, same two CPU cores and `LP_NUM_THREADS=2`,
+Godot 4.7.2 Compatibility on Mesa llvmpipe. The external comparison alternates
+old / new / new / old, restoring the original ocean shader and hiding only the
+new waterline quads for the old variant. Each block warms for 12 frames and then
+samples 32 process-time values. Final diffuse-only water results:
+
+| Block | Median process time | Min–max | Checkpoint FPS |
+|---|---:|---:|---:|
+| Old ocean 1 | 292.108 ms | 161.641–574.322 ms | 4 |
+| New ocean 1 | 188.643 ms | 175.440–217.255 ms | 5 |
+| New ocean 2 | 190.857 ms | 179.851–251.447 ms | 6 |
+| Old ocean 2 | 172.899 ms | 158.838–604.502 ms | 2 |
+
+A separate original-ocean baseline median was 166.392 ms; the final new shader's
+pre-comparison checkpoint was 176.253 ms. The cloud software renderer has large
+scheduling/driver variation, so this is a **small diagnostic sample**, not a
+precise speedup/regression estimate or a claim of unchanged performance. The new
+water increases this identical scene from **93 to 107 draw calls** and **12,090 to
+12,118 primitives**; the ocean mesh itself is unchanged. Hardware GPU performance
+is unmeasured. No real-time 20/60 FPS claim is made.

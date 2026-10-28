@@ -72,7 +72,8 @@ RPC 有类型、身份、状态、坐标、舰队合法性与频率限制，但�
 - `scripts/network.gd`：ENet 房间、准入、定向快照、请求验证与断线处理，未改动。
 - `scripts/main.gd`：真实 Node3D 场景、相机与网格、射线拾取、输入、极简界面和音效。
 - `scripts/ship_visual.gd`：Kenney GLB 实例、物理碰撞、浮动与沉船动画。
-- `assets/shaders/ocean.gdshader`：真实平面网格上的轻微波动与水色，不是伪 3D 投影。
+- `assets/shaders/ocean.gdshader`：层次水色、交错波光与稀疏浅色浪尖；可见船体 / 浮标带局部接触涟漪。
+  保持网格与红蓝射击标记稳定；[案例研究、实现与性能边界](docs/OCEAN_ART.md)。
 - `tests/`、[`docs/QA.md`](docs/QA.md)：规则、真实多进程网络及原生窗口输入验证。
 
 ```sh
