@@ -7,5 +7,5 @@ msgstr ""
 msgid "双人海战棋，等待接入派对房间与私密布阵。"
 msgstr "双人海战棋，等待接入派对房间与私密布阵。"
 
-msgid "静海交锋"
-msgstr "静海交锋"
+msgid "海战棋"
+msgstr "海战棋"
