@@ -1,12 +1,11 @@
 [gd_scene format=3 uid="uid://bqbhsfj8kmbto"]
 
-[node name="PendingRound" type="CenterContainer" unique_id=1060921965]
+[ext_resource type="Script" uid="uid://d1v4psqjqyfv6" path="res://games/minigame/godot_party_default_battleship_chess/party_round.gd" id="1_xuoyc"]
+
+[node name="BattleRound" type="Control" unique_id=1060921965]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-
-[node name="Status" type="Label" parent="." unique_id=898685399]
-layout_mode = 2
-text = "海战棋 · 暂未开放
-双人海战棋，等待接入派对房间与私密布阵。"
-horizontal_alignment = 1
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xuoyc")
