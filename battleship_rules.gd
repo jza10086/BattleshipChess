@@ -1,7 +1,7 @@
 extends RefCounted
 ## Host-owned fleets and votes. Views reveal only allied ships and publicly sunk enemies.
 const SIZE: int = 10
-const LENGTHS: Array[int] = [5, 4, 3, 3, 2]
+const LENGTHS: Array[int] = [5, 4, 4, 3, 2]
 var teams: Array = [[], []]
 var connected: Dictionary = {}
 var fleets: Array = [[], []]
