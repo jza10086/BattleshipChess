@@ -1,0 +1,994 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" path="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf" id="1_slv5s"]
+[ext_resource type="Script" path="res://games/minigame/godot_party_default_battleship_chess/battle_view.gd" id="2_nmmmd"]
+[ext_resource type="Shader" path="res://games/minigame/godot_party_default_battleship_chess/assets/shaders/ocean.gdshader" id="3_0r1sw"]
+[ext_resource type="Texture2D" path="res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png" id="4_ne6w7"]
+
+[sub_resource type="Theme" id="Theme_ico3i"]
+default_font = ExtResource("1_slv5s")
+default_font_size = 24
+
+[sub_resource type="Environment" id="Environment_80pa6"]
+background_mode = 1
+background_color = Color(0.4, 0.68235296, 0.70980394, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.8235294, 0.89411765, 0.8862745, 1)
+ambient_light_energy = 0.46
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a460r"]
+render_priority = 0
+shader = ExtResource("3_0r1sw")
+shader_parameter/current_fields = ExtResource("4_ne6w7")
+shader_parameter/deep_color = null
+shader_parameter/sea_color = null
+shader_parameter/shoal_color = null
+shader_parameter/crest_color = null
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_xc0i8"]
+size = Vector2(240, 240)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bgsm3"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.92, 0.5, 0.55)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ca68c"]
+size = Vector3(0.94, 0.025, 0.94)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s5iui"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.78, 0.96, 0.9, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dybng"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ps65h"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_damqg"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d7856"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hvbul"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6rg4l"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4ggxy"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_68vu7"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vroxw"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_f7a46"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5n12e"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_r6btt"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8m01o"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yqwpn"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jioof"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x61pg"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_eeiin"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1gevu"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v5gup"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x078u"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1c44u"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_c8c2r"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8q2rk"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_u6wrt"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_753fh"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_etoky"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_130o1"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bq2fq"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8v2fn"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_chw21"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h8dt3"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0pl2l"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vlqap"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_52ox6"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_aql6e"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fvcob"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v3qn1"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ep6tm"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_og42y"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ojemk"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kifv8"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xag28"]
+size = Vector3(10, 0.012, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_y1ivv"]
+size = Vector3(0.022, 0.012, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ecuch"]
+size = Vector3(10, 0.012, 0.022)
+
+[node name="BattleView" type="Control" unique_id=230343443]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = SubResource("Theme_ico3i")
+script = ExtResource("2_nmmmd")
+
+[node name="Models" type="Node3D" parent="." unique_id=72831441]
+unique_name_in_owner = true
+
+[node name="World" type="WorldEnvironment" parent="Models" unique_id=215114880]
+unique_name_in_owner = true
+environment = SubResource("Environment_80pa6")
+
+[node name="Sun" type="DirectionalLight3D" parent="Models" unique_id=1267475176]
+unique_name_in_owner = true
+transform = Transform3D(0.81915206, 0.46984634, -0.32898995, 0, 0.57357645, 0.81915206, 0.57357645, -0.6710101, 0.46984634, 0, 0, 0)
+light_color = Color(1, 0.9411765, 0.8392157, 1)
+light_energy = 0.72
+shadow_enabled = true
+directional_shadow_max_distance = 55.0
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Models" unique_id=362902300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.055, 0)
+material_override = SubResource("ShaderMaterial_a460r")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_xc0i8")
+
+[node name="Camera" type="Camera3D" parent="Models" unique_id=1756855463]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 12, 12)
+current = true
+fov = 55.0
+
+[node name="Ships" type="Node3D" parent="Models" unique_id=1380737681]
+unique_name_in_owner = true
+
+[node name="OwnerLabels" type="Node3D" parent="Models" unique_id=1003516741]
+unique_name_in_owner = true
+
+[node name="Marks" type="Node3D" parent="Models" unique_id=541759046]
+unique_name_in_owner = true
+
+[node name="Aim" type="MeshInstance3D" parent="Models" unique_id=1028508648]
+unique_name_in_owner = true
+visible = false
+material_override = SubResource("StandardMaterial3D_bgsm3")
+mesh = SubResource("BoxMesh_ca68c")
+
+[node name="BlueSea" type="Node3D" parent="Models" unique_id=866339611]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 0)
+
+[node name="MeshInstance3D1" type="MeshInstance3D" parent="Models/BlueSea" unique_id=2129373789]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_dybng")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Models/BlueSea" unique_id=1508847421]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -5)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_ps65h")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Models/BlueSea" unique_id=811198901]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_damqg")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Models/BlueSea" unique_id=246402045]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -4)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_d7856")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Models/BlueSea" unique_id=513906771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_hvbul")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Models/BlueSea" unique_id=412888462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -3)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_6rg4l")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="Models/BlueSea" unique_id=608185210]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_4ggxy")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="Models/BlueSea" unique_id=463956486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -2)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_68vu7")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="Models/BlueSea" unique_id=1990094351]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_vroxw")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="Models/BlueSea" unique_id=198198540]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -1)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_f7a46")
+
+[node name="MeshInstance3D11" type="MeshInstance3D" parent="Models/BlueSea" unique_id=1000746989]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_5n12e")
+
+[node name="MeshInstance3D12" type="MeshInstance3D" parent="Models/BlueSea" unique_id=1910447815]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_r6btt")
+
+[node name="MeshInstance3D13" type="MeshInstance3D" parent="Models/BlueSea" unique_id=1377129603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_8m01o")
+
+[node name="MeshInstance3D14" type="MeshInstance3D" parent="Models/BlueSea" unique_id=1860451917]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 1)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_yqwpn")
+
+[node name="MeshInstance3D15" type="MeshInstance3D" parent="Models/BlueSea" unique_id=7227595]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_jioof")
+
+[node name="MeshInstance3D16" type="MeshInstance3D" parent="Models/BlueSea" unique_id=957819392]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 2)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_x61pg")
+
+[node name="MeshInstance3D17" type="MeshInstance3D" parent="Models/BlueSea" unique_id=369341261]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_eeiin")
+
+[node name="MeshInstance3D18" type="MeshInstance3D" parent="Models/BlueSea" unique_id=464171554]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 3)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_1gevu")
+
+[node name="MeshInstance3D19" type="MeshInstance3D" parent="Models/BlueSea" unique_id=387633736]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_v5gup")
+
+[node name="MeshInstance3D20" type="MeshInstance3D" parent="Models/BlueSea" unique_id=1162672435]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 4)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_x078u")
+
+[node name="MeshInstance3D21" type="MeshInstance3D" parent="Models/BlueSea" unique_id=999178004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_1c44u")
+
+[node name="MeshInstance3D22" type="MeshInstance3D" parent="Models/BlueSea" unique_id=61500164]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 5)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_c8c2r")
+
+[node name="Label3D23" type="Label3D" parent="Models/BlueSea" unique_id=2025477283]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "A"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D24" type="Label3D" parent="Models/BlueSea" unique_id=265109228]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -4.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "1"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D25" type="Label3D" parent="Models/BlueSea" unique_id=1190937371]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "B"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D26" type="Label3D" parent="Models/BlueSea" unique_id=1097044561]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -3.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "2"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D27" type="Label3D" parent="Models/BlueSea" unique_id=110994722]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "C"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D28" type="Label3D" parent="Models/BlueSea" unique_id=91550520]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -2.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "3"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D29" type="Label3D" parent="Models/BlueSea" unique_id=1748510096]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "D"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D30" type="Label3D" parent="Models/BlueSea" unique_id=228235238]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -1.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "4"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D31" type="Label3D" parent="Models/BlueSea" unique_id=1241591655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "E"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D32" type="Label3D" parent="Models/BlueSea" unique_id=191961947]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -0.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "5"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D33" type="Label3D" parent="Models/BlueSea" unique_id=500833876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "F"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D34" type="Label3D" parent="Models/BlueSea" unique_id=283497943]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 0.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "6"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D35" type="Label3D" parent="Models/BlueSea" unique_id=1087204984]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "G"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D36" type="Label3D" parent="Models/BlueSea" unique_id=2078835117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 1.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "7"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D37" type="Label3D" parent="Models/BlueSea" unique_id=135885827]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "H"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D38" type="Label3D" parent="Models/BlueSea" unique_id=1165389531]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 2.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "8"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D39" type="Label3D" parent="Models/BlueSea" unique_id=980823080]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "I"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D40" type="Label3D" parent="Models/BlueSea" unique_id=475071520]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 3.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "9"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D41" type="Label3D" parent="Models/BlueSea" unique_id=64644160]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "J"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D42" type="Label3D" parent="Models/BlueSea" unique_id=154375255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 4.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "10"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D43" type="Label3D" parent="Models/BlueSea" unique_id=393119333]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 5.7)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+modulate = Color(0.7176471, 0.9019608, 1, 1)
+text = "蓝队海域"
+font = ExtResource("1_slv5s")
+font_size = 52
+
+[node name="RedSea" type="Node3D" parent="Models" unique_id=534447227]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 0)
+
+[node name="MeshInstance3D1" type="MeshInstance3D" parent="Models/RedSea" unique_id=39726111]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_8q2rk")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Models/RedSea" unique_id=5456829]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -5)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_u6wrt")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Models/RedSea" unique_id=1818784698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_753fh")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Models/RedSea" unique_id=809478724]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -4)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_etoky")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Models/RedSea" unique_id=563913812]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_130o1")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Models/RedSea" unique_id=1386252471]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -3)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_bq2fq")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="Models/RedSea" unique_id=1357600204]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_8v2fn")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="Models/RedSea" unique_id=51797683]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -2)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_chw21")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="Models/RedSea" unique_id=538895550]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_h8dt3")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="Models/RedSea" unique_id=1760501027]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -1)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_0pl2l")
+
+[node name="MeshInstance3D11" type="MeshInstance3D" parent="Models/RedSea" unique_id=1099480565]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_vlqap")
+
+[node name="MeshInstance3D12" type="MeshInstance3D" parent="Models/RedSea" unique_id=13240049]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_52ox6")
+
+[node name="MeshInstance3D13" type="MeshInstance3D" parent="Models/RedSea" unique_id=1421327853]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_aql6e")
+
+[node name="MeshInstance3D14" type="MeshInstance3D" parent="Models/RedSea" unique_id=1009644393]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 1)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_fvcob")
+
+[node name="MeshInstance3D15" type="MeshInstance3D" parent="Models/RedSea" unique_id=95849383]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_v3qn1")
+
+[node name="MeshInstance3D16" type="MeshInstance3D" parent="Models/RedSea" unique_id=334468349]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 2)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_ep6tm")
+
+[node name="MeshInstance3D17" type="MeshInstance3D" parent="Models/RedSea" unique_id=63351461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_og42y")
+
+[node name="MeshInstance3D18" type="MeshInstance3D" parent="Models/RedSea" unique_id=914902399]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 3)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_ojemk")
+
+[node name="MeshInstance3D19" type="MeshInstance3D" parent="Models/RedSea" unique_id=2004637630]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_kifv8")
+
+[node name="MeshInstance3D20" type="MeshInstance3D" parent="Models/RedSea" unique_id=26841038]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 4)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_xag28")
+
+[node name="MeshInstance3D21" type="MeshInstance3D" parent="Models/RedSea" unique_id=539324707]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_y1ivv")
+
+[node name="MeshInstance3D22" type="MeshInstance3D" parent="Models/RedSea" unique_id=1475837161]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 5)
+material_override = SubResource("StandardMaterial3D_s5iui")
+mesh = SubResource("BoxMesh_ecuch")
+
+[node name="Label3D23" type="Label3D" parent="Models/RedSea" unique_id=1352169758]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "A"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D24" type="Label3D" parent="Models/RedSea" unique_id=384500563]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -4.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "1"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D25" type="Label3D" parent="Models/RedSea" unique_id=228530031]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "B"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D26" type="Label3D" parent="Models/RedSea" unique_id=416376429]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -3.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "2"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D27" type="Label3D" parent="Models/RedSea" unique_id=1528671212]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "C"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D28" type="Label3D" parent="Models/RedSea" unique_id=1416605179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -2.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "3"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D29" type="Label3D" parent="Models/RedSea" unique_id=966813036]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "D"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D30" type="Label3D" parent="Models/RedSea" unique_id=1464646486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -1.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "4"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D31" type="Label3D" parent="Models/RedSea" unique_id=396971920]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "E"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D32" type="Label3D" parent="Models/RedSea" unique_id=938940383]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, -0.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "5"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D33" type="Label3D" parent="Models/RedSea" unique_id=277042981]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "F"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D34" type="Label3D" parent="Models/RedSea" unique_id=1557542022]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 0.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "6"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D35" type="Label3D" parent="Models/RedSea" unique_id=1702248872]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "G"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D36" type="Label3D" parent="Models/RedSea" unique_id=1115152715]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 1.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "7"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D37" type="Label3D" parent="Models/RedSea" unique_id=132389811]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "H"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D38" type="Label3D" parent="Models/RedSea" unique_id=32468912]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 2.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "8"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D39" type="Label3D" parent="Models/RedSea" unique_id=1720148472]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "I"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D40" type="Label3D" parent="Models/RedSea" unique_id=153115440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 3.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "9"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D41" type="Label3D" parent="Models/RedSea" unique_id=1055347782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.08, -5.45)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "J"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D42" type="Label3D" parent="Models/RedSea" unique_id=465631313]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.45, 0.08, 4.5)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "10"
+font = ExtResource("1_slv5s")
+font_size = 38
+
+[node name="Label3D43" type="Label3D" parent="Models/RedSea" unique_id=344538684]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 5.7)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+modulate = Color(1, 0.7058824, 0.627451, 1)
+text = "红队海域"
+font = ExtResource("1_slv5s")
+font_size = 52
+
+[node name="GameHUD" type="CanvasLayer" parent="." unique_id=507270370]
+layer = -2
+
+[node name="Controls" type="Control" parent="GameHUD" unique_id=402917163]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = SubResource("Theme_ico3i")
+
+[node name="MarginContainer1" type="MarginContainer" parent="GameHUD/Controls" unique_id=1037124088]
+layout_mode = 0
+anchor_right = 1.0
+mouse_filter = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 32
+
+[node name="HBoxContainer1" type="HBoxContainer" parent="GameHUD/Controls/MarginContainer1" unique_id=2023836345]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="VBoxContainer1" type="VBoxContainer" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1" unique_id=1268336674]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Status" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1/VBoxContainer1" unique_id=1367258861]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
+theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 30
+text = "海战棋 · 蓝队"
+
+[node name="Roster" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1/VBoxContainer1" unique_id=1985535256]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
+theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 21
+autowrap_mode = 3
+
+[node name="Event" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1/VBoxContainer1" unique_id=1036069835]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
+theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 23
+
+[node name="Clock" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1" unique_id=2124133951]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
+theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "60 秒"
+
+[node name="ShowRules" type="Button" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1" unique_id=548640343]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "规则"
+
+[node name="MarginContainer2" type="MarginContainer" parent="GameHUD/Controls" unique_id=2089191214]
+layout_mode = 0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer1" type="VBoxContainer" parent="GameHUD/Controls/MarginContainer2" unique_id=1548386749]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Placement" type="HBoxContainer" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1" unique_id=1234818575]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ShipChoice" type="OptionButton" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=1402396307]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Rotate" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=146219243]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "横向 / 纵向"
+
+[node name="Shuffle" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=523974071]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "随机摆放我的舰船"
+
+[node name="ReadyButton" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=1888363209]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "我的布阵完成"
+
+[node name="Switch" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=1870133480]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "切换测试队伍"
+
+[node name="Hint" type="Label" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1" unique_id=341563750]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
+theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 23
+text = "选择一艘舰船，点击己方海域布阵"
+
+[node name="Rules" type="PanelContainer" parent="GameHUD/Controls" unique_id=1496453077]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer1" type="VBoxContainer" parent="GameHUD/Controls/Rules" unique_id=344804504]
+layout_mode = 2
+
+[node name="Label1" type="Label" parent="GameHUD/Controls/Rules/VBoxContainer1" unique_id=1138156661]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
+theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 24
+text = "海战棋
+
+2–8 人随机分为蓝红两队，共用各队舰队。
+每队五艘舰船随机均分，每人只放置自己的舰船。
+选择舰船和朝向，点击己方格子布阵；全员确认或60秒后出航。
+轮到己方时点击敌方格子投票，每人一票，可在收齐前改投。
+收齐或超时后，按票数权重随机选一个目标；命中也轮换。
+无人投票则跳过。击沉全部敌舰获胜；整队离线判负。
+1 人测试由你交替操作两队，不添加机器人。
+
+Esc 打开派对菜单。"
+
+[node name="CloseRules" type="Button" parent="GameHUD/Controls/Rules/VBoxContainer1" unique_id=702445005]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "关闭"

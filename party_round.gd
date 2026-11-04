@@ -7,7 +7,7 @@ const VIEW: StringName = &"view"
 var api: PartyAPI
 var request: Dictionary
 var model: RefCounted
-var view: Control
+@onready var view: BattleView = %BattleView
 var snapshot: Dictionary = {}
 var _briefing: Control
 var _settlement: Control
@@ -32,11 +32,10 @@ func party_setup(value: PartyAPI, config: Dictionary) -> void:
 func _ready() -> void:
 	add_to_group("party_minimal_hud")
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	view = BattleView.new()
-	add_child(view)
 	if api == null:
 		push_error("海战棋需要从派对大厅启动。")
 		return
+	view.i18n = api.i18n
 	view.set_roster(api.get_players())
 	view.action_requested.connect(_send_action)
 	var gate_script: Script = api.load_asset({"package_id": api.protocol_id, "resource_key": "briefing_gate"}) as Script
@@ -127,6 +126,7 @@ func _apply_action(player_id: String, action: Dictionary) -> void:
 	_publish()
 
 func _players_changed() -> void:
+	view.i18n = api.i18n
 	view.set_roster(api.get_players())
 	if not _playing or _settling or _stopped or not api.is_host():
 		return
