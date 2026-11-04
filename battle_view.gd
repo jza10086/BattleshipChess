@@ -82,9 +82,9 @@ func _build_world() -> void:
 	models.add_child(ocean)
 	camera = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_PERSPECTIVE
-	camera.fov = 38.0
+	camera.fov = 55.0
 	camera.current = true
-	camera.position = Vector3(0, 20, 17)
+	camera.position = Vector3(0, 12, 12)
 	models.add_child(camera)
 	camera.look_at(Vector3.ZERO)
 	var grid: StandardMaterial3D = _material(Color(0.78, 0.96, 0.90, 0.32))
