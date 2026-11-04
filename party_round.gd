@@ -111,9 +111,9 @@ func _message(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 			return
 		_received_revision = payload.revision
 		snapshot = payload.state
-		view.show_state(snapshot)
+		var impact_time: float = view.show_state(snapshot)
 		if snapshot.phase == "finished" and not _settling:
-			_open_settlement(payload.result)
+			_open_settlement(payload.result, impact_time)
 
 func _apply_action(player_id: String, action: Dictionary) -> void:
 	var previous_phase: String = model.phase
@@ -154,10 +154,14 @@ func _publish() -> void:
 			_fail("view_send_failed", error_string(error))
 			return
 
-func _open_settlement(result: Dictionary) -> void:
+func _open_settlement(result: Dictionary, impact_time: float) -> void:
 	_settling = true
 	view.input_enabled = false
 	_result = result
+	if impact_time > 0.0:
+		await get_tree().create_timer(impact_time).timeout
+		if _stopped or not api.is_open():
+			return
 	var gate_script: Script = api.load_asset({"package_id": api.protocol_id, "resource_key": "settlement_gate"}) as Script
 	if gate_script == null:
 		_fail("settlement_missing", "原版协议缺少结算页面")

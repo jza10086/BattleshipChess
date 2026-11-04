@@ -1,14 +1,17 @@
 extends Control
 ## Full-viewport sea and edge HUD. Receives only the host's filtered view, never hidden fleet state.
 signal action_requested(action: Dictionary)
+const YAMATO: int = 1
+const YAMATO_WRECK: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship_destroyed.glb")
+const ShellBurst: Script = preload("res://games/minigame/godot_party_default_battleship_chess/shell_burst.gd")
 const MODELS: Array[PackedScene] = [
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/kenney-watercraft/ship-ocean-liner.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/kenney-watercraft/ship-cargo-a.glb"),
+	preload("res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/kenney-watercraft/boat-tug-a.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/kenney-watercraft/boat-tug-b.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/kenney-watercraft/boat-speed-a.glb")]
-const BOUNDS: Array[Vector3] = [Vector3(4.76,8.934,21.28), Vector3(3.917,3.38,10.549),
-	Vector3(1.785,2.237,3.47), Vector3(1.785,2.237,2.87), Vector3(1.785,1.5,3.37)]
+const KENNEY_BOUNDS: Dictionary[int, Vector3] = {0: Vector3(4.76,8.934,21.28), 2: Vector3(1.785,2.237,3.47),
+	3: Vector3(1.785,2.237,2.87), 4: Vector3(1.785,1.5,3.37)}
 const FONT: Font = preload("res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf")
 const WATER: Shader = preload("res://games/minigame/godot_party_default_battleship_chess/assets/shaders/ocean.gdshader")
 const WATERLINE: Shader = preload("res://games/minigame/godot_party_default_battleship_chess/assets/shaders/waterline.gdshader")
@@ -219,7 +222,9 @@ func set_roster(players: Array[Dictionary]) -> void:
 	for player: Dictionary in players:
 		_names[player.player_id] = player.name + ("" if player.connected else "（离线）")
 
-func show_state(value: Dictionary) -> void:
+## Apply a filtered host view. Return the duration of a fresh impact so the final shot can be seen before results.
+func show_state(value: Dictionary) -> float:
+	var previous_shots: int = value.shots.size() if _state.is_empty() else _state.shots.size()
 	_state = value
 	_remaining = value.remaining
 	var team: int = value.team
@@ -240,7 +245,7 @@ func show_state(value: Dictionary) -> void:
 		offered.append(_ship_choice.get_item_id(index))
 	if offered != value.owned_ships:
 		_ship_choice.clear()
-		var ship_names: Array[String] = ["远洋轮 · 5格", "货轮 · 4格", "拖轮 · 3格", "工作艇 · 3格", "快艇 · 2格"]
+		var ship_names: Array[String] = ["远洋轮 · 5格", "大和号战列舰 · 4格", "拖轮 · 3格", "工作艇 · 3格", "快艇 · 2格"]
 		for index: int in value.owned_ships:
 			_ship_choice.add_item(ship_names[index], index)
 		if not value.owned_ships.is_empty():
@@ -274,6 +279,17 @@ func show_state(value: Dictionary) -> void:
 		_shown_marks = marks.duplicate(true)
 		_rebuild_marks()
 
+	var impact_time: float = 0.0
+	for i: int in range(previous_shots, value.shots.size()):
+		var shot: Dictionary = value.shots[i]
+		if shot.hit:
+			var burst: Node3D = ShellBurst.new()
+			burst.position = _cell_position(1 - shot.by, shot.cell) + Vector3.UP * 0.20
+			models.add_child(burst)
+			burst.play(shot.sunk >= 0, i * 100 + shot.cell)
+			impact_time = ShellBurst.DURATION
+	return impact_time
+
 static func coordinate(cell: int) -> String:
 	return String.chr(65 + cell % 10) + str(cell / 10 + 1)
 
@@ -297,12 +313,19 @@ func _rebuild_ships() -> void:
 			owner_label.font_size = 20
 			owner_label.width = 72.0
 			owner_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			var model: Node3D = MODELS[ship.index].instantiate()
+			var scene: PackedScene = MODELS[ship.index]
+			if ship.index == YAMATO and ship.sunk:
+				scene = YAMATO_WRECK
+			var model: Node3D = scene.instantiate()
 			holder.add_child(model)
-			var bounds: Vector3 = BOUNDS[ship.index]
-			model.scale = Vector3(0.92 / bounds.x, minf((ship.length - 0.18) / bounds.z, 0.53), (ship.length - 0.18) / bounds.z)
-			model.rotation.y = PI / 2.0
-			model.position.y = -0.52 if ship.sunk else -0.13
+			if ship.index == YAMATO:
+				# Both exports share the same board-space origin, +X bow and waterline.
+				model.position.y = -0.06 if ship.sunk else 0.0
+			else:
+				var bounds: Vector3 = KENNEY_BOUNDS[ship.index]
+				model.scale = Vector3(0.92 / bounds.x, minf((ship.length - 0.18) / bounds.z, 0.53), (ship.length - 0.18) / bounds.z)
+				model.rotation.y = PI / 2.0
+				model.position.y = -0.52 if ship.sunk else -0.13
 			var ring: MeshInstance3D = MeshInstance3D.new()
 			var patch: PlaneMesh = PlaneMesh.new()
 			var footprint: Vector2 = Vector2(ship.length - 0.22, 0.8)

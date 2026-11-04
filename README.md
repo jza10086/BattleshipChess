@@ -7,6 +7,7 @@ GodotParty API 4 小游戏，使用 GodotPartyDefault 的 standard 协议。正�
 - **1 人**：单机测试，同一个玩家交替操作蓝、红两队；布阵时可切换队伍，对战时自动切换到当前行动队。没有机器人，完成测试后玩家排名第一。
 - **2–8 人**：按本轮种子随机均分两队，奇数人数相差一人；蓝、红两队各共用一片 10×10 海域和一支舰队。
 - 舰船长度为 5、4、3、3、2，可相邻，不可重叠或超出海域。击沉对方全部五艘舰船获胜。
+- 4 格舰船为大和号战列舰。命中时在落点播放低多边形爆炸，四格全部命中后显示断裂的残骸。最后一击播完再显示结算。
 - 胜队在线成员并列第一，负队在线成员并列第二；退出成员记为 withdrawn，不排名。
 
 ## 布阵与投票
@@ -34,7 +35,7 @@ GodotParty API 4 小游戏，使用 GodotPartyDefault 的 standard 协议。正�
 - `party_round.gd`：派对生命周期、消息认证、计时、准备与结算。
 - `battle_view.gd`：透视投影的全幅 3D 海域、舰船、贴边 HUD 与鼠标操作。
 - `settings.gd` / `adapter.gd`：房间规则和 standard 适配。
-- `assets/`：正式使用的 Kenney 舰船、Noto CJK 字体子集及原型海面资源，许可证随资源保留，见 `assets/SOURCES.md`。
+- `assets/`：大和号完好及损毁模型、Kenney 舰船与闪光贴图、Noto CJK 字体子集及海面资源，见 `assets/SOURCES.md`。
 - `prototype/`：原独立双人原型存档，由 `.gdignore` 隔离，不作为正式派对运行依赖。
 
 定向规则及真实大厅联机检查位于主工程 `tmp/test/battleship/`。自动检查不代替跨机器联机、1920×1080 视觉与操作手感的人工验收。
