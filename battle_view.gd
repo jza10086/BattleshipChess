@@ -1,17 +1,15 @@
 extends Control
 ## Full-viewport sea and edge HUD. Receives only the host's filtered view, never hidden fleet state.
 signal action_requested(action: Dictionary)
-const OCEAN_LINER: int = 0
-const LINER_BOUNDS: Vector3 = Vector3(4.76, 8.934, 21.28)
 const ShellBurst: Script = preload("res://games/minigame/godot_party_default_battleship_chess/shell_burst.gd")
 const MODELS: Array[PackedScene] = [
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/kenney-watercraft/ship-ocean-liner.glb"),
+	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_gerald_r_ford_cvn78.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/enterprise_cv6.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/hms_belfast.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_kidd_dd661.glb")]
 const WRECKS: Array[PackedScene] = [
-	null,
+	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_gerald_r_ford_cvn78_destroyed.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship_destroyed.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/enterprise_cv6_destroyed.glb"),
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/hms_belfast_destroyed.glb"),
@@ -249,7 +247,7 @@ func show_state(value: Dictionary) -> float:
 		offered.append(_ship_choice.get_item_id(index))
 	if offered != value.owned_ships:
 		_ship_choice.clear()
-		var ship_names: Array[String] = ["远洋轮 · 5格", "大和号战列舰 · 4格", "企业号航母 · 4格", "贝尔法斯特号巡洋舰 · 3格", "基德号驱逐舰 · 2格"]
+		var ship_names: Array[String] = ["福特号航母 · 5格", "大和号战列舰 · 4格", "企业号航母 · 4格", "贝尔法斯特号巡洋舰 · 3格", "基德号驱逐舰 · 2格"]
 		for index: int in value.owned_ships:
 			_ship_choice.add_item(ship_names[index], index)
 		if not value.owned_ships.is_empty():
@@ -317,19 +315,10 @@ func _rebuild_ships() -> void:
 			owner_label.font_size = 20
 			owner_label.width = 72.0
 			owner_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			var scene: PackedScene = MODELS[ship.index]
-			if ship.sunk and ship.index != OCEAN_LINER:
-				scene = WRECKS[ship.index]
+			var scene: PackedScene = WRECKS[ship.index] if ship.sunk else MODELS[ship.index]
 			var model: Node3D = scene.instantiate()
 			holder.add_child(model)
-			if ship.index != OCEAN_LINER:
-				# Fleet exports share the same board-space origin, +X bow and waterline.
-				model.position.y = -0.06 if ship.sunk else 0.0
-			else:
-				var bounds: Vector3 = LINER_BOUNDS
-				model.scale = Vector3(0.92 / bounds.x, minf((ship.length - 0.18) / bounds.z, 0.53), (ship.length - 0.18) / bounds.z)
-				model.rotation.y = PI / 2.0
-				model.position.y = -0.52 if ship.sunk else -0.13
+			model.position.y = -0.06 if ship.sunk else 0.0
 			var ring: MeshInstance3D = MeshInstance3D.new()
 			var patch: PlaneMesh = PlaneMesh.new()
 			var footprint: Vector2 = Vector2(ship.length - 0.22, 0.8)
