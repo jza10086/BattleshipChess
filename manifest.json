@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
   "core_api_major": 4,
-  "package_version": "1.1.0",
+  "package_version": "1.2.0",
   "id": "godot_party_default_battleship_chess",
   "name": "海战棋",
   "kind": "minigame",
-  "introduction": "1人交替操作两队测试，2–8人随机均分两队。队长秘密布阵，两队轮流投票，按票数权重随机轰炸目标；击沉敌方全部舰船获胜。",
+  "introduction": "1人交替操作两队测试，2–8人随机均分两队。舰船随机均分给队员各自秘密布阵，两队轮流投票，按票数权重随机轰炸目标；击沉敌方全部舰船获胜。",
   "entry": "party_round.tscn",
   "player_counts": [
     1, 2, 3, 4, 5, 6, 7, 8

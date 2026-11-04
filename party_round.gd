@@ -45,7 +45,7 @@ func _ready() -> void:
 		return
 	_briefing = gate_script.new()
 	var content: Dictionary = gate_script.read_content(get_script().resource_path.get_base_dir().path_join("manifest.json"), api)
-	content["controls"] = [{"binding": "鼠标左键", "description": "队长布阵 / 点击敌方地块投票"},
+	content["controls"] = [{"binding": "鼠标左键", "description": "摆放自己的舰船 / 点击敌方地块投票"},
 		{"binding": "Esc", "description": "打开派对菜单"}]
 	_briefing.configure(api, content)
 	_briefing.play_requested.connect(_begin_play)
