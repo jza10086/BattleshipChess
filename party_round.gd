@@ -17,7 +17,7 @@ var _stopped: bool = false
 var _settling: bool = false
 var _submitted: bool = false
 var _remaining: float = 60.0
-var _vote_seconds: int
+var _target_seconds: int
 var _last_second: int = -1
 var _revision: int = 0
 var _received_revision: int = -1
@@ -25,7 +25,7 @@ var _received_revision: int = -1
 func party_setup(value: PartyAPI, config: Dictionary) -> void:
 	api = value
 	request = config.duplicate(true)
-	_vote_seconds = api.get_settings().vote_seconds
+	_target_seconds = api.get_settings().target_seconds
 	api.net.message_received.connect(_message)
 	api.players_changed.connect(_players_changed)
 
@@ -44,7 +44,7 @@ func _ready() -> void:
 		return
 	_briefing = gate_script.new()
 	var content: Dictionary = gate_script.read_content(get_script().resource_path.get_base_dir().path_join("manifest.json"), api)
-	content["controls"] = [{"binding": "鼠标左键", "description": "摆放自己的舰船 / 点击敌方地块投票"},
+	content["controls"] = [{"binding": "鼠标左键", "description": "摆放自己的舰船 / 抢选敌方轰炸目标"},
 		{"binding": "Esc", "description": "打开派对菜单"}]
 	_briefing.configure(api, content)
 	_briefing.play_requested.connect(_begin_play)
@@ -80,8 +80,8 @@ func _process(delta: float) -> void:
 		if model.phase == "placement":
 			model.begin_battle()
 		elif model.phase == "battle":
-			model.resolve_vote()
-		_remaining = float(_vote_seconds)
+			model.resolve_salvo()
+		_remaining = float(_target_seconds)
 		_publish()
 	elif ceili(_remaining) != _last_second:
 		_publish()
@@ -117,12 +117,13 @@ func _message(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 func _apply_action(player_id: String, action: Dictionary) -> void:
 	var previous_phase: String = model.phase
 	if not model.act(player_id, action):
+		_publish()
 		return
 	if previous_phase == "placement" and model.phase == "battle":
-		_remaining = float(_vote_seconds)
-	elif model.phase == "battle" and model.all_voted():
-		model.resolve_vote()
-		_remaining = float(_vote_seconds)
+		_remaining = float(_target_seconds)
+	elif model.phase == "battle" and model.all_targeted():
+		model.resolve_salvo()
+		_remaining = float(_target_seconds)
 	_publish()
 
 func _players_changed() -> void:
@@ -130,10 +131,13 @@ func _players_changed() -> void:
 	view.set_roster(api.get_players())
 	if not _playing or _settling or _stopped or not api.is_host():
 		return
+	var previous_phase: String = model.phase
 	model.update_connections(api.get_players())
-	if model.phase == "battle" and model.all_voted():
-		model.resolve_vote()
-		_remaining = float(_vote_seconds)
+	if previous_phase == "placement" and model.phase == "battle":
+		_remaining = float(_target_seconds)
+	if model.phase == "battle" and model.all_targeted():
+		model.resolve_salvo()
+		_remaining = float(_target_seconds)
 	_publish()
 
 ## Never broadcast the full model: the host may itself be an unselected spectator.
@@ -167,7 +171,7 @@ func _open_settlement(result: Dictionary, impact_time: float) -> void:
 		_fail("settlement_missing", "原版协议缺少结算页面")
 		return
 	_settlement = gate_script.new()
-	_settlement.configure(api, {"title": "海战棋 · " + ("本局取消" if snapshot.winner < 0 else ("测试完成" if snapshot.solo else ("蓝队获胜" if snapshot.winner == 0 else "红队获胜"))),
+	_settlement.configure(api, {"title": "海战棋 · " + ("双方平局" if snapshot.winner < 0 else ("测试完成" if snapshot.solo else ("蓝队获胜" if snapshot.winner == 0 else "红队获胜"))),
 		"rows": result.rankings}, request.request_id)
 	_settlement.continued.connect(_submit_result)
 	add_child(_settlement)

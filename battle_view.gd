@@ -16,7 +16,7 @@ const WRECKS: Array[PackedScene] = [
 	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_kidd_dd661_destroyed.glb")]
 const FONT: Font = preload("res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf")
 const ShotMarker: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/shot_marker.tscn")
-const VoteMarker: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/vote_marker.tscn")
+const TargetMarker: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/vote_marker.tscn")
 const WATERLINE: Shader = preload("res://games/minigame/godot_party_default_battleship_chess/assets/shaders/waterline.gdshader")
 const FIELDS: Texture2D = preload("res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png")
 @onready var seas: Array[Node3D] = [$Models/BlueSea, $Models/RedSea]
@@ -99,7 +99,9 @@ func show_state(value: Dictionary) -> float:
 		names.append(("蓝队 " if board == 0 else "红队 ") + "、".join(team_names))
 	_roster.text = "    |    ".join(names)
 	var placement: bool = value.phase == "placement"
-	_placement.visible = placement and team >= 0
+	_placement.visible = team >= 0 and (placement or value.solo)
+	for control: Control in [_ship_choice, _rotate, _shuffle, _ready_button]:
+		control.visible = placement
 	_switch.visible = value.solo
 	var offered: Array[int] = []
 	for index: int in range(_ship_choice.item_count):
@@ -116,13 +118,26 @@ func show_state(value: Dictionary) -> float:
 	for button: BaseButton in [_ship_choice, _rotate, _shuffle, _ready_button]:
 		button.disabled = team < 0 or value.placement_ready
 	_ready_button.text = "已完成，等待队友" if value.placement_ready else "我的布阵完成"
-	_event.text = ("布阵确认：蓝队 %d 人 · 红队 %d 人" % [value.ready_counts[0], value.ready_counts[1]]) if placement else ("蓝队" if value.turn == 0 else "红队") + "投票中 · %d / %d 人" % [value.voted, value.eligible]
+	_event.text = ("布阵确认：蓝队 %d 人 · 红队 %d 人" % [value.ready_counts[0], value.ready_counts[1]]) if placement else "共同回合 %d · 蓝队已选 %d/%d · 红队已选 %d/%d" % [value.turn_number, value.targeted[0], value.eligible[0], value.targeted[1], value.eligible[1]]
 	if value.phase == "finished":
-		_event.text = "本局结束" if value.winner < 0 else ("蓝队" if value.winner == 0 else "红队") + "获胜"
-	elif not value.last_event.is_empty():
-		var event: Dictionary = value.last_event
-		_event.text += "    上轮：" + ("无人投票，跳过" if event.cell < 0 else "%s %s" % [coordinate(event.cell), "击沉！" if event.sunk >= 0 else ("命中" if event.hit else "未命中")])
-	_hint.text = "选择舰船和方向，点击己方格子放置 · Esc 菜单" if placement else "点击敌方格子投票 · 金色数字为票数 / 抽中概率 · Esc 菜单"
+		_event.text = "双方平局" if value.winner < 0 else ("蓝队" if value.winner == 0 else "红队") + "获胜"
+	elif not value.last_salvo.is_empty():
+		var hits: int = 0
+		var duds: int = 0
+		for shell: Dictionary in value.last_salvo:
+			if shell.hit:
+				hits += 1
+			if shell.dud:
+				duds += 1
+		_event.text += "    上轮 %d 发 · 命中 %d · 哑弹 %d" % [value.last_salvo.size(), hits, duds]
+	_hint.text = "选择舰船和方向，点击己方格子放置 · Esc 菜单" if placement else "点击敌方空闲格抢选目标 · 同队先到先得，可改选空闲格 · 命中 +1，胜队 +100 · Esc 菜单"
+	if not placement and team >= 0 and value.own_target >= 0:
+		_hint.text = "已选 %s · 等待双方选齐或超时发射 · 可改选空闲格 · Esc 菜单" % coordinate(value.own_target)
+	if not placement:
+		var totals: Array[String] = []
+		for id: String in value.scores:
+			totals.append("%s %d分" % [_names[id], value.scores[id]])
+		_roster.text += "\n" + " · ".join(totals)
 	if placement and team >= 0:
 		_status.text += " · 负责 %d 艘舰船" % value.owned_ships.size()
 		if value.placement_ready:
@@ -135,7 +150,7 @@ func show_state(value: Dictionary) -> float:
 		_shown_fleets = value.fleets.duplicate(true)
 		_rebuild_ships()
 	_owner_labels.visible = placement
-	var marks: Dictionary = {"shots": value.shots, "votes": value.votes, "turn": value.turn}
+	var marks: Dictionary = {"shots": value.shots, "targets": value.targets, "team": value.team}
 	if marks != _shown_marks:
 		_shown_marks = marks.duplicate(true)
 		_rebuild_marks()
@@ -204,14 +219,12 @@ func _rebuild_marks() -> void:
 		marker.global_position = _cell_position(1 - shot.by, shot.cell)
 		if shot.hit:
 			marker.material_override.albedo_color = Color(0.95, 0.2, 0.18, 0.75)
-	var counts: Dictionary = {}
-	for cell: int in _state.votes.values():
-		counts[cell] = counts.get(cell, 0) + 1
-	for cell: int in counts:
-		var marker: MeshInstance3D = VoteMarker.instantiate()
+	for id: String in _state.targets:
+		var cell: int = _state.targets[id]
+		var marker: MeshInstance3D = TargetMarker.instantiate()
 		_marks.add_child(marker)
-		marker.global_position = _cell_position(1 - _state.turn, cell)
-		marker.get_node("VoteCount").text = i18n.text(&"hud.votes", {"count": counts[cell], "percent": roundi(100.0 * counts[cell] / _state.votes.size())})
+		marker.global_position = _cell_position(1 - _state.team, cell)
+		marker.get_node("TargetOwner").text = _names[id].left(8)
 
 func _process(delta: float) -> void:
 	if _state.is_empty():
@@ -250,12 +263,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if _state.phase == "placement" and not _state.placement_ready and _hover_team == _state.team and _selected in _state.owned_ships:
 			_send({"kind": "place", "index": _selected, "x": _hover % 10, "y": _hover / 10, "vertical": _vertical})
-		elif _state.phase == "battle" and _state.team == _state.turn and _hover_team == 1 - _state.turn:
-			_send({"kind": "vote", "cell": _hover})
+		elif _state.phase == "battle" and _state.team >= 0 and _hover_team == 1 - _state.team:
+			_send({"kind": "target", "cell": _hover})
 		get_viewport().set_input_as_handled()
 
 func _send(action: Dictionary) -> void:
 	if not input_enabled or _state.is_empty():
 		return
 	action["turn"] = _state.turn_number
+	action["team"] = _state.team
 	action_requested.emit(action)

@@ -1,9 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bc5l6hrw5bama"]
 
-[ext_resource type="FontFile" path="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf" id="1_slv5s"]
-[ext_resource type="Script" path="res://games/minigame/godot_party_default_battleship_chess/battle_view.gd" id="2_nmmmd"]
-[ext_resource type="Shader" path="res://games/minigame/godot_party_default_battleship_chess/assets/shaders/ocean.gdshader" id="3_0r1sw"]
-[ext_resource type="Texture2D" path="res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png" id="4_ne6w7"]
+[ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf" id="1_slv5s"]
+[ext_resource type="Script" uid="uid://qdy2srjufvop" path="res://games/minigame/godot_party_default_battleship_chess/battle_view.gd" id="2_nmmmd"]
+[ext_resource type="Shader" uid="uid://nptrumxuh84b" path="res://games/minigame/godot_party_default_battleship_chess/assets/shaders/ocean.gdshader" id="3_0r1sw"]
+[ext_resource type="Texture2D" uid="uid://cv6aon6p1yai3" path="res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png" id="4_ne6w7"]
 
 [sub_resource type="Theme" id="Theme_ico3i"]
 default_font = ExtResource("1_slv5s")
@@ -20,10 +20,10 @@ ambient_light_energy = 0.46
 render_priority = 0
 shader = ExtResource("3_0r1sw")
 shader_parameter/current_fields = ExtResource("4_ne6w7")
-shader_parameter/deep_color = null
-shader_parameter/sea_color = null
-shader_parameter/shoal_color = null
-shader_parameter/crest_color = null
+shader_parameter/deep_color = Color(0.12, 0.4, 0.47, 1)
+shader_parameter/sea_color = Color(0.2, 0.55, 0.59, 1)
+shader_parameter/shoal_color = Color(0.35, 0.67, 0.66, 1)
+shader_parameter/crest_color = Color(0.65, 0.83, 0.77, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_xc0i8"]
 size = Vector2(240, 240)
@@ -178,6 +178,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme = SubResource("Theme_ico3i")
 script = ExtResource("2_nmmmd")
@@ -838,6 +840,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme = SubResource("Theme_ico3i")
 
@@ -979,11 +983,13 @@ text = "海战棋
 
 2–8 人随机分为蓝红两队，共用各队舰队。
 每队五艘舰船随机均分，每人只放置自己的舰船。
-选择舰船和朝向，点击己方格子布阵；全员确认或60秒后出航。
-轮到己方时点击敌方格子投票，每人一票，可在收齐前改投。
-收齐或超时后，按票数权重随机选一个目标；命中也轮换。
-无人投票则跳过。击沉全部敌舰获胜；整队离线判负。
-1 人测试由你交替操作两队，不添加机器人。
+全员确认或60秒后出航。双方在同一回合同时选点。
+每人一发，抢选敌方空闲格；同队先到先得，可改选空闲格。
+双方选齐或超时后同时发射；未选目标者本轮不发射。
+人数较多队随机产生人数差额的哑弹，不得分且不消耗目标格。
+命中 +1 分。全部炮弹结算后判断胜负，同时全灭为平局。
+胜队每人 +100 分，按总分排名；平局均无胜利加分。
+整队离线判负。1人测试依次操作两队，选齐后一起发射。
 
 Esc 打开派对菜单。"
 
