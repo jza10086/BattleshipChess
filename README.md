@@ -35,8 +35,11 @@ GodotParty API 4 小游戏，使用 GodotPartyDefault 的 standard 协议。正�
 - `battleship_rules.gd`：主机共同回合规则、视图过滤、个人分数排名。
 - `party_round.gd`：派对生命周期、消息认证、计时、准备与结算。
 - `battle_view.gd`：透视投影的全幅 3D 海域、舰船、贴边 HUD 与鼠标操作。
+- `ship_display.tscn` / `ship_display.gd`：可编辑舰船展示模板，保存五组完好/残骸资源、模型挂点、负责人名字牌和独立水线材质；按已过滤视图中的舰型、舰长、朝向、沉没状态实例化。
+- `i18n/zh_Hans.po`：准备说明、HUD、详细规则和结算展示共用的中文模板。独立打开 `battle_view.tscn` 可预览固定场景与规则面板，使用同一 Translation，不构造派对或写入成绩；完整单人测试仍从大厅进入。
 - `settings.gd` / `adapter.gd`：房间规则和 standard 适配。
 - `assets/`：五艘军舰的完好及损毁模型、Kenney 闪光贴图、Noto CJK 字体子集及海面资源，见 `assets/SOURCES.md`。
 - `prototype/`：原独立双人原型存档，由 `.gdignore` 隔离，不作为正式派对运行依赖。
+- 收到最终视图后先校验协议结果，再播放末轮弹着并打开结算；停止会断开本包监听、停止页面与本地弹着，等待中的延迟结算不会在退出后重新打开。
 
 定向规则及真实大厅联机检查位于主工程 `tmp/test/battleship/`。自动检查不代替跨机器联机、1920×1080 视觉与操作手感的人工验收。

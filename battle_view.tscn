@@ -3,6 +3,7 @@
 [ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf" id="1_slv5s"]
 [ext_resource type="Script" uid="uid://qdy2srjufvop" path="res://games/minigame/godot_party_default_battleship_chess/battle_view.gd" id="2_nmmmd"]
 [ext_resource type="Shader" uid="uid://nptrumxuh84b" path="res://games/minigame/godot_party_default_battleship_chess/assets/shaders/ocean.gdshader" id="3_0r1sw"]
+[ext_resource type="PackedScene" uid="uid://dd41tjxmyfd3p" path="res://games/minigame/godot_party_default_battleship_chess/ship_display.tscn" id="3_nmmmd"]
 [ext_resource type="Texture2D" uid="uid://cv6aon6p1yai3" path="res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png" id="4_ne6w7"]
 
 [sub_resource type="Theme" id="Theme_ico3i"]
@@ -174,6 +175,7 @@ size = Vector3(0.022, 0.012, 10)
 size = Vector3(10, 0.012, 0.022)
 
 [node name="BattleView" type="Control" unique_id=230343443]
+auto_translate_mode = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -183,6 +185,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme = SubResource("Theme_ico3i")
 script = ExtResource("2_nmmmd")
+ship_display_scene = ExtResource("3_nmmmd")
 
 [node name="Models" type="Node3D" parent="." unique_id=72831441]
 unique_name_in_owner = true
@@ -214,7 +217,7 @@ fov = 55.0
 [node name="Ships" type="Node3D" parent="Models" unique_id=1380737681]
 unique_name_in_owner = true
 
-[node name="OwnerLabels" type="Node3D" parent="Models" unique_id=1003516741]
+[node name="Impacts" type="Node3D" parent="Models" unique_id=1003516741]
 unique_name_in_owner = true
 
 [node name="Marks" type="Node3D" parent="Models" unique_id=541759046]
@@ -519,7 +522,8 @@ text = "10"
 font = ExtResource("1_slv5s")
 font_size = 38
 
-[node name="Label3D43" type="Label3D" parent="Models/BlueSea" unique_id=393119333]
+[node name="BlueSeaLabel" type="Label3D" parent="Models/BlueSea" unique_id=393119333]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 5.7)
 pixel_size = 0.012
 billboard = 1
@@ -822,7 +826,8 @@ text = "10"
 font = ExtResource("1_slv5s")
 font_size = 38
 
-[node name="Label3D43" type="Label3D" parent="Models/RedSea" unique_id=344538684]
+[node name="RedSeaLabel" type="Label3D" parent="Models/RedSea" unique_id=344538684]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 5.7)
 pixel_size = 0.012
 billboard = 1
@@ -833,6 +838,7 @@ font = ExtResource("1_slv5s")
 font_size = 52
 
 [node name="GameHUD" type="CanvasLayer" parent="." unique_id=507270370]
+unique_name_in_owner = true
 layer = -2
 
 [node name="Controls" type="Control" parent="GameHUD" unique_id=402917163]
@@ -973,7 +979,8 @@ grow_vertical = 2
 [node name="VBoxContainer1" type="VBoxContainer" parent="GameHUD/Controls/Rules" unique_id=344804504]
 layout_mode = 2
 
-[node name="Label1" type="Label" parent="GameHUD/Controls/Rules/VBoxContainer1" unique_id=1138156661]
+[node name="RulesText" type="Label" parent="GameHUD/Controls/Rules/VBoxContainer1" unique_id=1138156661]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
 theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)

@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://dd41tjxmyfd3p"]
+
+[ext_resource type="Script" uid="uid://dj28w6rqn4tw8" path="res://games/minigame/godot_party_default_battleship_chess/ship_display.gd" id="1_fwn0e"]
+[ext_resource type="PackedScene" uid="uid://clkpdofsrcyax" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_gerald_r_ford_cvn78.glb" id="2_suqpi"]
+[ext_resource type="PackedScene" uid="uid://n6i6yafdh657" path="res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship.glb" id="3_u6rwm"]
+[ext_resource type="PackedScene" uid="uid://rnns2rdh5ot" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/enterprise_cv6.glb" id="4_x867w"]
+[ext_resource type="PackedScene" uid="uid://bnn6colbhw2sd" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/hms_belfast.glb" id="5_6tw4w"]
+[ext_resource type="PackedScene" uid="uid://dwhwfw64s2hiw" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_kidd_dd661.glb" id="6_uc0rg"]
+[ext_resource type="PackedScene" uid="uid://ddedpjhkcnrj6" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_gerald_r_ford_cvn78_destroyed.glb" id="7_2ncas"]
+[ext_resource type="PackedScene" uid="uid://b20g423f0gbkw" path="res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship_destroyed.glb" id="8_a0bf5"]
+[ext_resource type="PackedScene" uid="uid://dynaldj57j0hq" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/enterprise_cv6_destroyed.glb" id="9_st1ap"]
+[ext_resource type="PackedScene" uid="uid://cvxqeygmmbfco" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/hms_belfast_destroyed.glb" id="10_mngwd"]
+[ext_resource type="PackedScene" uid="uid://27cb763gmmu0" path="res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_kidd_dd661_destroyed.glb" id="11_0qvws"]
+[ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf" id="12_4k8ia"]
+[ext_resource type="Shader" uid="uid://dggqe81j3y2tj" path="res://games/minigame/godot_party_default_battleship_chess/assets/shaders/waterline.gdshader" id="13_h1npt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fs3ye"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("13_h1npt")
+shader_parameter/footprint = Vector2(3.78, 0.8)
+shader_parameter/patch_size = Vector2(4.78, 1.8)
+shader_parameter/phase = 0.0
+shader_parameter/opacity = 1.0
+shader_parameter/foam_color = Color(0.72, 0.88, 0.81, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2xiqb"]
+resource_local_to_scene = true
+size = Vector2(4.78, 1.8)
+
+[node name="ShipDisplay" type="Node3D" unique_id=280095200]
+script = ExtResource("1_fwn0e")
+intact_models = [ExtResource("2_suqpi"), ExtResource("3_u6rwm"), ExtResource("4_x867w"), ExtResource("5_6tw4w"), ExtResource("6_uc0rg")]
+wreck_models = [ExtResource("7_2ncas"), ExtResource("8_a0bf5"), ExtResource("9_st1ap"), ExtResource("10_mngwd"), ExtResource("11_0qvws")]
+
+[node name="Hull" type="Node3D" parent="." unique_id=153292852]
+unique_name_in_owner = true
+
+[node name="OwnerLabel" type="Label3D" parent="." unique_id=1086332647]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+pixel_size = 0.012
+billboard = 1
+no_depth_test = true
+text = "舰长"
+font = ExtResource("12_4k8ia")
+font_size = 20
+autowrap_mode = 3
+width = 72.0
+
+[node name="Waterline" type="MeshInstance3D" parent="." unique_id=1212683312]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.018, 0)
+material_override = SubResource("ShaderMaterial_fs3ye")
+mesh = SubResource("PlaneMesh_2xiqb")

@@ -2,23 +2,11 @@ extends Control
 ## Full-viewport sea and edge HUD. Receives only the host's filtered view, never hidden fleet state.
 signal action_requested(action: Dictionary)
 const ShellBurst: Script = preload("res://games/minigame/godot_party_default_battleship_chess/shell_burst.gd")
-const MODELS: Array[PackedScene] = [
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_gerald_r_ford_cvn78.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/enterprise_cv6.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/hms_belfast.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_kidd_dd661.glb")]
-const WRECKS: Array[PackedScene] = [
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_gerald_r_ford_cvn78_destroyed.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship_destroyed.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/enterprise_cv6_destroyed.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/hms_belfast_destroyed.glb"),
-	preload("res://games/minigame/godot_party_default_battleship_chess/assets/fleet/uss_kidd_dd661_destroyed.glb")]
-const FONT: Font = preload("res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf")
+const ShipDisplay: Script = preload("res://games/minigame/godot_party_default_battleship_chess/ship_display.gd")
+const DEFAULT_TEXT: Translation = preload("res://games/minigame/godot_party_default_battleship_chess/i18n/zh_Hans.po")
+@export var ship_display_scene: PackedScene
 const ShotMarker: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/shot_marker.tscn")
 const TargetMarker: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/vote_marker.tscn")
-const WATERLINE: Shader = preload("res://games/minigame/godot_party_default_battleship_chess/assets/shaders/waterline.gdshader")
-const FIELDS: Texture2D = preload("res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png")
 @onready var seas: Array[Node3D] = [$Models/BlueSea, $Models/RedSea]
 var i18n: RefCounted
 @onready var world: WorldEnvironment = %World
@@ -26,7 +14,7 @@ var i18n: RefCounted
 @onready var models: Node3D = %Models
 @onready var camera: Camera3D = %Camera
 @onready var _ships: Node3D = %Ships
-@onready var _owner_labels: Node3D = %OwnerLabels
+@onready var _impacts: Node3D = %Impacts
 @onready var _marks: Node3D = %Marks
 @onready var _aim: MeshInstance3D = %Aim
 @onready var _status: Label = %Status
@@ -53,12 +41,14 @@ var _hover_team: int = -1
 var _remaining: float = 0.0
 
 func _ready() -> void:
+	assert(ship_display_scene != null, "Missing ship display scene")
+	_refresh_text()
 	%ShowRules.pressed.connect(func() -> void: _rules.show())
 	%CloseRules.pressed.connect(_rules.hide)
 	_ship_choice.item_selected.connect(func(index: int) -> void: _selected = _ship_choice.get_item_id(index))
 	_rotate.pressed.connect(func() -> void:
 		_vertical = not _vertical
-		_rotate.text = "纵向放置" if _vertical else "横向放置")
+		_rotate.text = _text(&"placement.vertical" if _vertical else &"placement.horizontal"))
 	_shuffle.pressed.connect(func() -> void: _send({"kind": "shuffle"}))
 	_ready_button.pressed.connect(func() -> void: _send({"kind": "ready"}))
 	_switch.pressed.connect(func() -> void: _send({"kind": "switch"}))
@@ -67,21 +57,28 @@ func _ready() -> void:
 	_status.text = ""
 	_hint.text = ""
 
-func _text3d(text: String, at: Vector3, parent: Node3D) -> Label3D:
-	var label: Label3D = Label3D.new()
-	label.text = text
-	label.font = FONT
-	label.font_size = 38
-	label.pixel_size = 0.012
-	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	label.position = at
-	label.no_depth_test = true
-	parent.add_child(label)
-	return label
+## The standalone view preview uses the same package Translation as formal play.
+func _text(key: StringName, parameters: Dictionary = {}) -> String:
+	return i18n.text(key, parameters) if i18n != null else String(DEFAULT_TEXT.get_message(key)).format(parameters)
+
+func set_localization(localization: RefCounted) -> void:
+	i18n = localization
+	_refresh_text()
+
+func _refresh_text() -> void:
+	%ShowRules.text = _text(&"rules.open")
+	%CloseRules.text = _text(&"rules.close")
+	%RulesText.text = _text(&"rules.body")
+	%BlueSeaLabel.text = _text(&"sea.blue")
+	%RedSeaLabel.text = _text(&"sea.red")
+	_rotate.text = _text(&"placement.vertical" if _vertical else &"placement.horizontal")
+	_shuffle.text = _text(&"placement.shuffle")
+	_switch.text = _text(&"placement.switch")
+	_ready_button.text = _text(&"placement.ready")
 
 func set_roster(players: Array[Dictionary]) -> void:
 	for player: Dictionary in players:
-		_names[player.player_id] = player.name + ("" if player.connected else "（离线）")
+		_names[player.player_id] = player.name if player.connected else _text(&"player.offline", {"name": player.name})
 
 ## Apply a filtered host view. Return the duration of a fresh impact so the final shot can be seen before results.
 func show_state(value: Dictionary) -> float:
@@ -89,14 +86,14 @@ func show_state(value: Dictionary) -> float:
 	_state = value
 	_remaining = value.remaining
 	var team: int = value.team
-	var team_name: String = "观战" if team < 0 else ("蓝队" if team == 0 else "红队")
-	_status.text = "海战棋 · " + ("单人测试 · 当前操作" if value.solo else "") + team_name
+	var team_name: String = _text(&"team.spectator" if team < 0 else (&"team.blue" if team == 0 else &"team.red"))
+	_status.text = _text(&"hud.solo_status" if value.solo else &"hud.status", {"team": team_name})
 	var names: Array[String] = []
 	for board: int in range(2):
 		var team_names: Array[String] = []
 		for id: String in value.teams[board]:
 			team_names.append(_names[id])
-		names.append(("蓝队 " if board == 0 else "红队 ") + "、".join(team_names))
+		names.append(_text(&"hud.team_roster", {"team": _text(&"team.blue" if board == 0 else &"team.red"), "names": "、".join(team_names)}))
 	_roster.text = "    |    ".join(names)
 	var placement: bool = value.phase == "placement"
 	_placement.visible = team >= 0 and (placement or value.solo)
@@ -108,19 +105,23 @@ func show_state(value: Dictionary) -> float:
 		offered.append(_ship_choice.get_item_id(index))
 	if offered != value.owned_ships:
 		_ship_choice.clear()
-		var ship_names: Array[String] = ["福特号航母 · 5格", "大和号战列舰 · 4格", "企业号航母 · 4格", "贝尔法斯特号巡洋舰 · 3格", "基德号驱逐舰 · 2格"]
+		var ship_keys: Array[StringName] = [&"ship.ford", &"ship.yamato", &"ship.enterprise", &"ship.belfast", &"ship.kidd"]
 		for index: int in value.owned_ships:
-			_ship_choice.add_item(ship_names[index], index)
+			_ship_choice.add_item(_text(ship_keys[index]), index)
 		if not value.owned_ships.is_empty():
 			if _selected not in value.owned_ships:
 				_selected = value.owned_ships[0]
 			_ship_choice.select(_ship_choice.get_item_index(_selected))
 	for button: BaseButton in [_ship_choice, _rotate, _shuffle, _ready_button]:
 		button.disabled = team < 0 or value.placement_ready
-	_ready_button.text = "已完成，等待队友" if value.placement_ready else "我的布阵完成"
-	_event.text = ("布阵确认：蓝队 %d 人 · 红队 %d 人" % [value.ready_counts[0], value.ready_counts[1]]) if placement else "共同回合 %d · 蓝队已选 %d/%d · 红队已选 %d/%d" % [value.turn_number, value.targeted[0], value.eligible[0], value.targeted[1], value.eligible[1]]
+	_ready_button.text = _text(&"placement.waiting" if value.placement_ready else &"placement.ready")
+	if placement:
+		_event.text = _text(&"hud.placement", {"blue": value.ready_counts[0], "red": value.ready_counts[1]})
+	else:
+		_event.text = _text(&"hud.salvo", {"round": value.turn_number, "blue": value.targeted[0],
+			"blue_total": value.eligible[0], "red": value.targeted[1], "red_total": value.eligible[1]})
 	if value.phase == "finished":
-		_event.text = "双方平局" if value.winner < 0 else ("蓝队" if value.winner == 0 else "红队") + "获胜"
+		_event.text = _text(&"result.draw") if value.winner < 0 else _text(&"result.winner", {"team": _text(&"team.blue" if value.winner == 0 else &"team.red")})
 	elif not value.last_salvo.is_empty():
 		var hits: int = 0
 		var duds: int = 0
@@ -129,27 +130,28 @@ func show_state(value: Dictionary) -> float:
 				hits += 1
 			if shell.dud:
 				duds += 1
-		_event.text += "    上轮 %d 发 · 命中 %d · 哑弹 %d" % [value.last_salvo.size(), hits, duds]
-	_hint.text = "选择舰船和方向，点击己方格子放置 · Esc 菜单" if placement else "点击敌方空闲格抢选目标 · 同队先到先得，可改选空闲格 · 命中 +1，胜队 +100 · Esc 菜单"
+		_event.text += "    " + _text(&"hud.last_salvo", {"shells": value.last_salvo.size(), "hits": hits, "duds": duds})
+	_hint.text = _text(&"hint.placement" if placement else &"hint.target")
 	if not placement and team >= 0 and value.own_target >= 0:
-		_hint.text = "已选 %s · 等待双方选齐或超时发射 · 可改选空闲格 · Esc 菜单" % coordinate(value.own_target)
+		_hint.text = _text(&"hint.selected", {"cell": coordinate(value.own_target)})
 	if not placement:
 		var totals: Array[String] = []
 		for id: String in value.scores:
-			totals.append("%s %d分" % [_names[id], value.scores[id]])
+			totals.append(_text(&"hud.player_score", {"name": _names[id], "score": value.scores[id]}))
 		_roster.text += "\n" + " · ".join(totals)
 	if placement and team >= 0:
-		_status.text += " · 负责 %d 艘舰船" % value.owned_ships.size()
+		_status.text = _text(&"hud.assignment", {"status": _status.text, "count": value.owned_ships.size()})
 		if value.placement_ready:
-			_hint.text = "你的布阵已完成，等待其余玩家确认 · Esc 菜单"
+			_hint.text = _text(&"hint.waiting")
 		else:
-			_hint.text = "仅能摆放自己的舰船；舰船上方显示负责人 · Esc 菜单"
+			_hint.text = _text(&"hint.owned")
 	if team < 0:
-		_hint.text = "观战：仅显示公开命中与已沉舰船 · Esc 菜单"
+		_hint.text = _text(&"hint.spectator")
 	if value.fleets != _shown_fleets:
 		_shown_fleets = value.fleets.duplicate(true)
 		_rebuild_ships()
-	_owner_labels.visible = placement
+	for ship: ShipDisplay in _ships.get_children():
+		ship.show_owner(placement)
 	var marks: Dictionary = {"shots": value.shots, "targets": value.targets, "team": value.team}
 	if marks != _shown_marks:
 		_shown_marks = marks.duplicate(true)
@@ -159,9 +161,9 @@ func show_state(value: Dictionary) -> float:
 	for i: int in range(previous_shots, value.shots.size()):
 		var shot: Dictionary = value.shots[i]
 		if shot.hit:
-			var burst: Node3D = ShellBurst.new()
+			var burst: ShellBurst = ShellBurst.new()
 			burst.position = _cell_position(1 - shot.by, shot.cell) + Vector3.UP * 0.20
-			models.add_child(burst)
+			_impacts.add_child(burst)
 			burst.play(shot.sunk >= 0, i * 100 + shot.cell)
 			impact_time = ShellBurst.DURATION
 	return impact_time
@@ -176,37 +178,24 @@ func _clear(parent: Node) -> void:
 
 func _rebuild_ships() -> void:
 	_clear(_ships)
-	_clear(_owner_labels)
 	for board: int in range(2):
 		for ship: Dictionary in _shown_fleets[board]:
-			var holder: Node3D = Node3D.new()
+			var holder: ShipDisplay = ship_display_scene.instantiate()
 			_ships.add_child(holder)
 			holder.global_position = seas[board].to_global(Vector3(ship.x - 4.5, 0, ship.y - 4.5))
 			holder.position += Vector3(0, 0, (ship.length - 1) * 0.5) if ship.vertical else Vector3((ship.length - 1) * 0.5, 0, 0)
-			holder.rotation.y = -PI / 2.0 if ship.vertical else 0.0
-			var owner_name: String = "我的" if board == _state.team and ship.index in _state.owned_ships else _names[ship.owner].left(6)
-			var owner_label: Label3D = _text3d(owner_name, holder.position + Vector3(0, 1.4, 0), _owner_labels)
-			owner_label.font_size = 20
-			owner_label.width = 72.0
-			owner_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			var scene: PackedScene = WRECKS[ship.index] if ship.sunk else MODELS[ship.index]
-			var model: Node3D = scene.instantiate()
-			holder.add_child(model)
-			model.position.y = -0.06 if ship.sunk else 0.0
-			var ring: MeshInstance3D = MeshInstance3D.new()
-			var patch: PlaneMesh = PlaneMesh.new()
-			var footprint: Vector2 = Vector2(ship.length - 0.22, 0.8)
-			patch.size = footprint + Vector2.ONE
-			ring.mesh = patch
-			var material: ShaderMaterial = ShaderMaterial.new()
-			material.shader = WATERLINE
-			material.set_shader_parameter("footprint", footprint)
-			material.set_shader_parameter("patch_size", patch.size)
-			material.set_shader_parameter("phase", float(ship.index))
-			material.set_shader_parameter("opacity", 0.32 if ship.sunk else 1.0)
-			ring.material_override = material
-			ring.position.y = -0.018
-			holder.add_child(ring)
+			var captain: String = _text(&"ship.mine") if board == _state.team and ship.index in _state.owned_ships else _names[ship.owner].left(6)
+			holder.configure(ship, captain, _state.phase == "placement")
+
+## End local presentation without disabling the controller's network processing.
+func stop() -> void:
+	input_enabled = false
+	set_process(false)
+	set_process_unhandled_input(false)
+	_aim.hide()
+	_rules.hide()
+	%GameHUD.hide()
+	_clear(_impacts)
 
 func _cell_position(board: int, cell: int) -> Vector3:
 	return seas[board].to_global(Vector3(cell % 10 - 4.5, 0.07, cell / 10 - 4.5))
@@ -230,7 +219,7 @@ func _process(delta: float) -> void:
 	if _state.is_empty():
 		return
 	_remaining = maxf(0.0, _remaining - delta)
-	_clock.text = i18n.text(&"hud.clock", {"time": ceili(_remaining)}) if _state.phase != "finished" else ""
+	_clock.text = _text(&"hud.clock", {"time": ceili(_remaining)}) if _state.phase != "finished" else ""
 	_aim.visible = false
 	_hover = -1
 	_hover_team = -1

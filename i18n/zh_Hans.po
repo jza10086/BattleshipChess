@@ -18,3 +18,144 @@ msgstr "游戏规则"
 
 msgid "hud.clock"
 msgstr "{time} 秒"
+
+msgid "controls.mouse"
+msgstr "鼠标左键"
+
+msgid "controls.primary"
+msgstr "摆放自己的舰船 / 抢选敌方轰炸目标"
+
+msgid "controls.menu"
+msgstr "打开派对菜单"
+
+msgid "rules.open"
+msgstr "规则"
+
+msgid "rules.close"
+msgstr "关闭"
+
+msgid "sea.blue"
+msgstr "蓝队海域"
+
+msgid "sea.red"
+msgstr "红队海域"
+
+msgid "team.blue"
+msgstr "蓝队"
+
+msgid "team.red"
+msgstr "红队"
+
+msgid "team.spectator"
+msgstr "观战"
+
+msgid "team.solo"
+msgstr "单人测试"
+
+msgid "placement.vertical"
+msgstr "纵向放置"
+
+msgid "placement.horizontal"
+msgstr "横向放置"
+
+msgid "placement.shuffle"
+msgstr "随机摆放我的舰船"
+
+msgid "placement.switch"
+msgstr "切换测试队伍"
+
+msgid "placement.ready"
+msgstr "我的布阵完成"
+
+msgid "placement.waiting"
+msgstr "已完成，等待队友"
+
+msgid "player.offline"
+msgstr "{name}（离线）"
+
+msgid "hud.status"
+msgstr "海战棋 · {team}"
+
+msgid "hud.solo_status"
+msgstr "海战棋 · 单人测试 · 当前操作{team}"
+
+msgid "hud.team_roster"
+msgstr "{team} {names}"
+
+msgid "hud.placement"
+msgstr "布阵确认：蓝队 {blue} 人 · 红队 {red} 人"
+
+msgid "hud.salvo"
+msgstr "共同回合 {round} · 蓝队已选 {blue}/{blue_total} · 红队已选 {red}/{red_total}"
+
+msgid "hud.last_salvo"
+msgstr "上轮 {shells} 发 · 命中 {hits} · 哑弹 {duds}"
+
+msgid "hud.player_score"
+msgstr "{name} {score}分"
+
+msgid "hud.assignment"
+msgstr "{status} · 负责 {count} 艘舰船"
+
+msgid "hint.placement"
+msgstr "选择舰船和方向，点击己方格子放置 · Esc 菜单"
+
+msgid "hint.target"
+msgstr "点击敌方空闲格抢选目标 · 同队先到先得，可改选空闲格 · 命中 +1，胜队 +100 · Esc 菜单"
+
+msgid "hint.selected"
+msgstr "已选 {cell} · 等待双方选齐或超时发射 · 可改选空闲格 · Esc 菜单"
+
+msgid "hint.waiting"
+msgstr "你的布阵已完成，等待其余玩家确认 · Esc 菜单"
+
+msgid "hint.owned"
+msgstr "仅能摆放自己的舰船；舰船上方显示负责人 · Esc 菜单"
+
+msgid "hint.spectator"
+msgstr "观战：仅显示公开命中与已沉舰船 · Esc 菜单"
+
+msgid "ship.ford"
+msgstr "福特号航母 · 5格"
+
+msgid "ship.yamato"
+msgstr "大和号战列舰 · 4格"
+
+msgid "ship.enterprise"
+msgstr "企业号航母 · 4格"
+
+msgid "ship.belfast"
+msgstr "贝尔法斯特号巡洋舰 · 3格"
+
+msgid "ship.kidd"
+msgstr "基德号驱逐舰 · 2格"
+
+msgid "ship.mine"
+msgstr "我的"
+
+msgid "result.draw"
+msgstr "双方平局"
+
+msgid "result.test_complete"
+msgstr "测试完成"
+
+msgid "result.winner"
+msgstr "{team}获胜"
+
+msgid "result.title"
+msgstr "海战棋 · {outcome}"
+
+msgid "result.column.score"
+msgstr "总分"
+
+msgid "result.column.hits"
+msgstr "命中"
+
+msgid "result.column.bonus"
+msgstr "胜利加分"
+
+msgid "result.column.team"
+msgstr "队伍"
+
+msgid "rules.body"
+msgstr "海战棋\n\n2–8 人随机分为蓝红两队，共用各队舰队。\n每队五艘舰船随机均分，每人只放置自己的舰船。\n全员确认或60秒后出航。双方在同一回合同时选点。\n每人一发，抢选敌方空闲格；同队先到先得，可改选空闲格。\n双方选齐或超时后同时发射；未选目标者本轮不发射。\n人数较多队随机产生人数差额的哑弹，不得分且不消耗目标格。\n命中 +1 分。全部炮弹结算后判断胜负，同时全灭为平局。\n胜队每人 +100 分，按总分排名；平局均无胜利加分。\n整队离线判负。1人测试依次操作两队，选齐后一起发射。\n\nEsc 打开派对菜单。"
