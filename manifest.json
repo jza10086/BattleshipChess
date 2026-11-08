@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "core_api_major": 4,
-  "package_version": "1.3.0",
+  "package_version": "1.3.1",
   "id": "godot_party_default_battleship_chess",
   "name": "海战棋",
   "kind": "minigame",
@@ -19,7 +19,7 @@
   ],
   "config_schema": "settings.gd",
   "dependencies": {
-    "godot_party_default_protocol": "1.0.0"
+    "godot_party_default_protocol": "1.0.1"
   },
   "streams": {
     "view": {
