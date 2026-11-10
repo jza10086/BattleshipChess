@@ -39,6 +39,8 @@ var input_enabled: bool = false
 var _hover: int = -1
 var _hover_team: int = -1
 var _remaining: float = 0.0
+## Formal entry supplies the shared clock; standalone previews use local delta.
+var host_clock: Callable
 
 func _ready() -> void:
 	assert(ship_display_scene != null, "Missing ship display scene")
@@ -218,7 +220,7 @@ func _rebuild_marks() -> void:
 func _process(delta: float) -> void:
 	if _state.is_empty():
 		return
-	_remaining = maxf(0.0, _remaining - delta)
+	_remaining = maxf(0.0, float(_state.end_msec - int(host_clock.call())) / 1000.0) if host_clock.is_valid() else maxf(0.0, _remaining - delta)
 	_clock.text = _text(&"hud.clock", {"time": ceili(_remaining)}) if _state.phase != "finished" else ""
 	_aim.visible = false
 	_hover = -1

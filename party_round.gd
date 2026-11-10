@@ -18,7 +18,9 @@ var _settling: bool = false
 var _submitted: bool = false
 var _remaining: float = 60.0
 var _target_seconds: int
-var _last_second: int = -1
+var _phase_key: String = ""
+var _end_msec: int = 0
+var _published_views: Dictionary = {}
 var _revision: int = 0
 var _received_revision: int = -1
 
@@ -36,6 +38,7 @@ func _ready() -> void:
 		push_error("海战棋需要从派对大厅启动。")
 		return
 	view.set_localization(api.i18n)
+	view.host_clock = api.net.host_time_msec
 	view.set_roster(api.get_players())
 	view.action_requested.connect(_send_action)
 	var gate_script: Script = api.load_asset({"package_id": api.protocol_id, "resource_key": "briefing_gate"}) as Script
@@ -83,8 +86,6 @@ func _process(delta: float) -> void:
 			model.resolve_salvo()
 		_remaining = float(_target_seconds)
 		_publish()
-	elif ceili(_remaining) != _last_second:
-		_publish()
 
 func _send_action(action: Dictionary) -> void:
 	if not _playing or _stopped or _settling or api.input.input_blocked:
@@ -124,7 +125,31 @@ func _message(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 				_fail("invalid_scorecard", "Missing battleship score columns or metrics")
 				return
 		_received_revision = payload.revision
-		snapshot = payload.state
+		if snapshot.is_empty():
+			snapshot = {"shots": [], "fleets": [[], []]}
+		var change: Dictionary = payload.state.duplicate(true)
+		if change.has("shots_added"):
+			if not change.shots_added is Array:
+				return
+			snapshot.shots.append_array(change.shots_added)
+			change.erase("shots_added")
+		if change.has("fleet_changes"):
+			if not change.fleet_changes is Array:
+				return
+			for entry: Variant in change.fleet_changes:
+				if not entry is Dictionary or entry.get("team") not in [0, 1] or not entry.get("ship") is Dictionary or not entry.ship.get("index") is int:
+					return
+				var replaced: bool = false
+				for index: int in snapshot.fleets[entry.team].size():
+					if snapshot.fleets[entry.team][index].index == entry.ship.index:
+						snapshot.fleets[entry.team][index] = entry.ship
+						replaced = true
+						break
+				if not replaced:
+					snapshot.fleets[entry.team].append(entry.ship)
+			change.erase("fleet_changes")
+		snapshot.merge(change, true)
+		snapshot["remaining"] = maxf(0.0, float(snapshot.end_msec - api.net.host_time_msec()) / 1000.0)
 		var impact_time: float = view.show_state(snapshot)
 		if snapshot.phase == "finished" and not _settling:
 			_open_settlement(payload.result, impact_time)
@@ -172,21 +197,52 @@ func _players_changed() -> void:
 
 ## Never broadcast the full model: the host may itself be an unselected spectator.
 func _publish() -> void:
+	var phase_key: String = "%s/%d" % [model.phase, model.turn_number]
+	if phase_key != _phase_key:
+		_phase_key = phase_key
+		_end_msec = api.net.host_time_msec() + roundi(_remaining * 1000.0)
 	_revision += 1
-	_last_second = ceili(_remaining)
 	var recipients: Array[Dictionary] = api.get_players()
 	recipients.append_array(api.get_spectators())
 	var result: Dictionary = model.result(request.request_id, api.get_players()) if model.phase == "finished" else {}
 	for player: Dictionary in recipients:
 		if not player.connected:
 			continue
-		var state: Dictionary = model.view(player.player_id)
-		state["remaining"] = _remaining
-		var error: Error = api.net.send_to_player(player.player_id, VIEW,
-			{"revision": _revision, "state": state, "result": result})
+		var current: Dictionary = model.view(player.player_id)
+		current["end_msec"] = _end_msec
+		var previous: Dictionary = _published_views.get(player.player_id, {})
+		var change: Dictionary = {}
+		for key: String in current:
+			if key in ["shots", "fleets"]:
+				continue
+			if not previous.has(key) or previous[key] != current[key]:
+				change[key] = current[key]
+		var shot_count: int = previous.get("shots", []).size()
+		if current.shots.size() > shot_count:
+			change["shots_added"] = current.shots.slice(shot_count)
+		var ships: Array = []
+		for team: int in range(2):
+			for ship: Dictionary in current.fleets[team]:
+				var old: Dictionary = {}
+				if previous.has("fleets"):
+					for candidate: Dictionary in previous.fleets[team]:
+						if candidate.index == ship.index:
+							old = candidate
+							break
+				if ship != old:
+					ships.append({"team": team, "ship": ship})
+		if not ships.is_empty():
+			change["fleet_changes"] = ships
+		if change.is_empty():
+			continue
+		var message: Dictionary = {"revision": _revision, "state": change}
+		if change.get("phase") == "finished":
+			message["result"] = result
+		var error: Error = api.net.send_to_player(player.player_id, VIEW, message)
 		if error != OK:
 			_fail("view_send_failed", error_string(error))
 			return
+		_published_views[player.player_id] = current.duplicate(true)
 
 func _open_settlement(result: Dictionary, impact_time: float) -> void:
 	_settling = true
