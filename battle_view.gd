@@ -1,12 +1,12 @@
 extends Control
 ## Full-viewport sea and edge HUD. Receives only the host's filtered view, never hidden fleet state.
 signal action_requested(action: Dictionary)
-const ShellBurst: Script = preload("res://games/minigame/godot_party_default_battleship_chess/shell_burst.gd")
-const ShipDisplay: Script = preload("res://games/minigame/godot_party_default_battleship_chess/ship_display.gd")
-const DEFAULT_TEXT: Translation = preload("res://games/minigame/godot_party_default_battleship_chess/i18n/zh_Hans.po")
+const ShellBurst: Script = preload("res://games/minigame/gp_battleship/shell_burst.gd")
+const ShipDisplay: Script = preload("res://games/minigame/gp_battleship/ship_display.gd")
+const DEFAULT_TEXT: Translation = preload("res://games/minigame/gp_battleship/i18n/zh_Hans.po")
 @export var ship_display_scene: PackedScene
-const ShotMarker: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/shot_marker.tscn")
-const TargetMarker: PackedScene = preload("res://games/minigame/godot_party_default_battleship_chess/vote_marker.tscn")
+const ShotMarker: PackedScene = preload("res://games/minigame/gp_battleship/shot_marker.tscn")
+const TargetMarker: PackedScene = preload("res://games/minigame/gp_battleship/vote_marker.tscn")
 @onready var seas: Array[Node3D] = [$Models/BlueSea, $Models/RedSea]
 var i18n: RefCounted
 @onready var world: WorldEnvironment = %World

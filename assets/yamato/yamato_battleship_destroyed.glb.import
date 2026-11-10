@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://b20g423f0gbkw"
-path="res://.godot/imported/yamato_battleship_destroyed.glb-b98314853f998260ccc2e27d93941fef.scn"
+path="res://.godot/imported/yamato_battleship_destroyed.glb-7d5743379b78b276aa8bd03f6c721b27.scn"
 
 [deps]
 
-source_file="res://games/minigame/godot_party_default_battleship_chess/assets/yamato/yamato_battleship_destroyed.glb"
-dest_files=["res://.godot/imported/yamato_battleship_destroyed.glb-b98314853f998260ccc2e27d93941fef.scn"]
+source_file="res://games/minigame/gp_battleship/assets/yamato/yamato_battleship_destroyed.glb"
+dest_files=["res://.godot/imported/yamato_battleship_destroyed.glb-7d5743379b78b276aa8bd03f6c721b27.scn"]
 
 [params]
 

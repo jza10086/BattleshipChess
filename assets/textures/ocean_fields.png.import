@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cv6aon6p1yai3"
-path.s3tc="res://.godot/imported/ocean_fields.png-0e7beba2192de9da4e3f5ed0058d4db7.s3tc.ctex"
+path.s3tc="res://.godot/imported/ocean_fields.png-765cc8998cda5ee91067ff5ebde8274e.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png"
-dest_files=["res://.godot/imported/ocean_fields.png-0e7beba2192de9da4e3f5ed0058d4db7.s3tc.ctex"]
+source_file="res://games/minigame/gp_battleship/assets/textures/ocean_fields.png"
+dest_files=["res://.godot/imported/ocean_fields.png-765cc8998cda5ee91067ff5ebde8274e.s3tc.ctex"]
 
 [params]
 

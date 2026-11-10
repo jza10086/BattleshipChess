@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bxnffntjpd1y1"]
 
-[ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf" id="font"]
+[ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/gp_battleship/assets/fonts/SeaInterface.otf" id="font"]
 
 [sub_resource type="StandardMaterial3D" id="Color"]
 resource_local_to_scene = true

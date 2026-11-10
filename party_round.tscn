@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bqbhsfj8kmbto"]
 
-[ext_resource type="Script" uid="uid://d1v4psqjqyfv6" path="res://games/minigame/godot_party_default_battleship_chess/party_round.gd" id="1_xuoyc"]
+[ext_resource type="Script" uid="uid://d1v4psqjqyfv6" path="res://games/minigame/gp_battleship/party_round.gd" id="1_xuoyc"]
 
-[ext_resource type="PackedScene" path="res://games/minigame/godot_party_default_battleship_chess/battle_view.tscn" id="view"]
+[ext_resource type="PackedScene" path="res://games/minigame/gp_battleship/battle_view.tscn" id="view"]
 
 [node name="BattleRound" type="Control" unique_id=1060921965]
 mouse_filter = 2

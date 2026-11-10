@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bc5l6hrw5bama"]
 
-[ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf" id="1_slv5s"]
-[ext_resource type="Script" uid="uid://qdy2srjufvop" path="res://games/minigame/godot_party_default_battleship_chess/battle_view.gd" id="2_nmmmd"]
-[ext_resource type="Shader" uid="uid://nptrumxuh84b" path="res://games/minigame/godot_party_default_battleship_chess/assets/shaders/ocean.gdshader" id="3_0r1sw"]
-[ext_resource type="PackedScene" uid="uid://dd41tjxmyfd3p" path="res://games/minigame/godot_party_default_battleship_chess/ship_display.tscn" id="3_nmmmd"]
-[ext_resource type="Texture2D" uid="uid://cv6aon6p1yai3" path="res://games/minigame/godot_party_default_battleship_chess/assets/textures/ocean_fields.png" id="4_ne6w7"]
+[ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/gp_battleship/assets/fonts/SeaInterface.otf" id="1_slv5s"]
+[ext_resource type="Script" uid="uid://qdy2srjufvop" path="res://games/minigame/gp_battleship/battle_view.gd" id="2_nmmmd"]
+[ext_resource type="Shader" uid="uid://nptrumxuh84b" path="res://games/minigame/gp_battleship/assets/shaders/ocean.gdshader" id="3_0r1sw"]
+[ext_resource type="PackedScene" uid="uid://dd41tjxmyfd3p" path="res://games/minigame/gp_battleship/ship_display.tscn" id="3_nmmmd"]
+[ext_resource type="Texture2D" uid="uid://cv6aon6p1yai3" path="res://games/minigame/gp_battleship/assets/textures/ocean_fields.png" id="4_ne6w7"]
 
 [sub_resource type="Theme" id="Theme_ico3i"]
 default_font = ExtResource("1_slv5s")

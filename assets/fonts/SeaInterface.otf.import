@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://dkyy2j4pclhwa"
-path="res://.godot/imported/SeaInterface.otf-1a7deb8db0ffd2263968e00c3f486029.fontdata"
+path="res://.godot/imported/SeaInterface.otf-977df32409f9e07821bf76f2a1a6768e.fontdata"
 
 [deps]
 
-source_file="res://games/minigame/godot_party_default_battleship_chess/assets/fonts/SeaInterface.otf"
-dest_files=["res://.godot/imported/SeaInterface.otf-1a7deb8db0ffd2263968e00c3f486029.fontdata"]
+source_file="res://games/minigame/gp_battleship/assets/fonts/SeaInterface.otf"
+dest_files=["res://.godot/imported/SeaInterface.otf-977df32409f9e07821bf76f2a1a6768e.fontdata"]
 
 [params]
 
