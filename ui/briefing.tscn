@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://games/protocols/godot_party_default_protocol/briefing/briefing_page.tscn" id="1"]
+
+[node name="Briefing" instance=ExtResource("1")]
+
+[node name="Title" parent="View/Layout/Center/Content" index="0"]
+text = "海战棋"
+
+[node name="Introduction" parent="View/Layout/Center/Content/Columns/RightColumn/InformationPanel/InformationMargin/Information/Rules/InformationScroll" index="0"]
+text = "1人依次操作两队测试，2–8人随机均分两队。每人抢选一个目标，双方同回合齐射；多人数队随机产生哑弹，命中+1分。击沉敌方全舰获胜，同时全灭为平局；胜队每人+100分，按总分排名。"
+
+[editable path="View"]

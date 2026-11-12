@@ -9,8 +9,8 @@ var request: Dictionary
 var model: Rules
 @onready var view: BattleView = %BattleView
 var snapshot: Dictionary = {}
-var _briefing: Control
-var _settlement: Control
+@export var briefing: Control
+@export var settlement: Control
 var _result: Dictionary = {}
 var _playing: bool = false
 var _stopped: bool = false
@@ -41,17 +41,11 @@ func _ready() -> void:
 	view.host_clock = api.net.host_time_msec
 	view.set_roster(api.get_players())
 	view.action_requested.connect(_send_action)
-	var gate_script: Script = api.load_asset({"package_id": api.protocol_id, "resource_key": "briefing_gate"}) as Script
-	if gate_script == null:
-		_fail("briefing_missing", "原版协议缺少规则准备页面")
-		return
-	_briefing = gate_script.new()
-	var content: Dictionary = gate_script.read_content(get_script().resource_path.get_base_dir().path_join("manifest.json"), api)
+	var content: Dictionary = briefing.read_content(get_script().resource_path.get_base_dir().path_join("manifest.json"), api)
 	content["controls"] = [{"binding": api.i18n.text(&"controls.mouse"), "description": api.i18n.text(&"controls.primary")},
 		{"binding": "Esc", "description": api.i18n.text(&"controls.menu")}]
-	_briefing.configure(api, content)
-	_briefing.play_requested.connect(_begin_play)
-	add_child(_briefing)
+	briefing.configure(api, content)
+	briefing.play_requested.connect(_begin_play)
 	var error: Error = api.mark_ready()
 	if error != OK:
 		_fail("ready_failed", error_string(error))
@@ -60,7 +54,7 @@ func godot_party_graphics_targets() -> Dictionary:
 	return {"world": view.world, "sun": view.sun, "materials_root": view.models}
 
 func party_start() -> void:
-	_briefing.transport_started()
+	briefing.transport_started()
 
 func _begin_play() -> void:
 	if _stopped:
@@ -252,14 +246,8 @@ func _open_settlement(result: Dictionary, impact_time: float) -> void:
 		await get_tree().create_timer(impact_time).timeout
 		if _stopped or not api.is_open():
 			return
-	var gate_script: Script = api.load_asset({"package_id": api.protocol_id, "resource_key": "settlement_gate"}) as Script
-	if gate_script == null:
-		_fail("settlement_missing", "原版协议缺少结算页面")
-		return
-	_settlement = gate_script.new()
-	_settlement.configure(api, _result_presentation(result), request.request_id)
-	_settlement.continued.connect(_submit_result)
-	add_child(_settlement)
+	settlement.configure(api, _result_presentation(result), request.request_id)
+	settlement.continued.connect(_submit_result)
 
 ## Translate a presentation copy; the authoritative result and its wire format remain unchanged.
 func _result_presentation(result: Dictionary) -> Dictionary:
@@ -297,10 +285,10 @@ func party_stop(_reason: StringName) -> void:
 		view.stop()
 		if view.action_requested.is_connected(_send_action):
 			view.action_requested.disconnect(_send_action)
-	if is_instance_valid(_briefing):
-		_briefing.stop()
-	if is_instance_valid(_settlement):
-		_settlement.stop()
+	if is_instance_valid(briefing):
+		briefing.stop()
+	if is_instance_valid(settlement):
+		settlement.stop()
 	if api.net.message_received.is_connected(_message):
 		api.net.message_received.disconnect(_message)
 	if api.players_changed.is_connected(_players_changed):

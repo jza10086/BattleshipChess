@@ -1,10 +1,14 @@
 [gd_scene format=3 uid="uid://bqbhsfj8kmbto"]
 
+[ext_resource type="PackedScene" path="res://games/minigame/gp_battleship/ui/round_pages.tscn" id="protocol_pages"]
+
 [ext_resource type="Script" uid="uid://d1v4psqjqyfv6" path="res://games/minigame/gp_battleship/party_round.gd" id="1_xuoyc"]
 
 [ext_resource type="PackedScene" path="res://games/minigame/gp_battleship/battle_view.tscn" id="view"]
 
-[node name="BattleRound" type="Control" unique_id=1060921965]
+[node name="BattleRound" type="Control" unique_id=1060921965 node_paths=PackedStringArray("briefing", "settlement")]
+briefing = NodePath("ProtocolPages/Briefing")
+settlement = NodePath("ProtocolPages/Settlement")
 mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,4 +18,7 @@ grow_vertical = 2
 script = ExtResource("1_xuoyc")
 
 [node name="BattleView" parent="." instance=ExtResource("view")]
+unique_name_in_owner = true
+
+[node name="ProtocolPages" parent="." instance=ExtResource("protocol_pages")]
 unique_name_in_owner = true
