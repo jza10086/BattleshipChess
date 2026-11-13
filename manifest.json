@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "core_api_major": 5,
-  "package_version": "1.3.14",
+  "core_api_major": 6,
+  "package_version": "1.3.15",
   "id": "gp_battleship",
   "name": "海战棋",
   "kind": "minigame",
@@ -22,7 +22,7 @@
   ],
   "config_schema": "settings.gd",
   "dependencies": {
-    "godot_party_default_protocol": "1.0.13"
+    "godot_party_default_protocol": "1.0.14"
   },
   "adapters": [
     {
