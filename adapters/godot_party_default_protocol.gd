@@ -1,4 +1,9 @@
 extends RefCounted
+
+## Content-owned gameplay rules, independent of package compatibility.
+static func party_definition() -> Dictionary:
+	return {"dependencies": {}}
+
 ## Battleship publishes personal score rankings under the standard protocol only.
 func check_request(request: Dictionary) -> Dictionary:
 	if request.get("mode") != "standard":
