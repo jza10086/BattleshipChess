@@ -60,6 +60,6 @@ Buoy effects are children of their board and inherit its visibility. Removing a
 visible ship/board removes its waterline too; there is no separate position cache
 that could retain hidden fleet data. `rules.gd` and `network.gd` are untouched.
 
-See [QA.md](QA.md) for the exact tested engine, native captures, software-renderer
+See [QA.md](gp_battleship_development.md) for the exact tested engine, native captures, software-renderer
 comparison and limitations. Rendering motion offline at a fixed step is visual
 verification, not a claim that the software desktop renders at that frame rate.

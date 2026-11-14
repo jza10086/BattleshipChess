@@ -38,10 +38,19 @@ GodotParty API 4 小游戏，使用 GodotPartyDefault 的 standard 协议。正�
 - `ship_display.tscn` / `ship_display.gd`：可编辑舰船展示模板，保存五组完好/残骸资源、模型挂点、负责人名字牌和独立水线材质；按已过滤视图中的舰型、舰长、朝向、沉没状态实例化。
 - `i18n/zh_Hans.po`：准备说明、HUD、详细规则和结算展示共用的中文模板。独立打开 `battle_view.tscn` 可预览固定场景与规则面板，使用同一 Translation，不构造派对或写入成绩；完整单人测试仍从大厅进入。
 - `settings.gd` / `adapter.gd`：房间规则和 standard 适配。
-- `assets/`：五艘军舰的完好及损毁模型、Kenney 闪光贴图、Noto CJK 字体子集及海面资源，见 `assets/SOURCES.md`。
+- `assets/`：五艘军舰的完好及损毁模型、Kenney 闪光贴图、Noto CJK 字体子集及海面资源，见 `doc/gp_battleship_assets_sources.md`。
 - `prototype/`：原独立双人原型存档，由 `.gdignore` 隔离，不作为正式派对运行依赖。
 - 收到最终视图后先校验协议结果，再播放末轮弹着并打开结算；停止会断开本包监听、停止页面与本地弹着，等待中的延迟结算不会在退出后重新打开。
 
 定向规则及真实大厅联机检查位于主工程 `tmp/test/battleship/`。自动检查不代替跨机器联机、1920×1080 视觉与操作手感的人工验收。
 
 1人依次操作两队测试，2–8人随机均分两队。每人抢选一个目标，双方同回合齐射；多人数队随机产生哑弹，命中+1分。击沉敌方全舰获胜，同时全灭为平局；胜队每人+100分，按总分排名。
+
+## 包内开发文档
+
+未带 `res://` 的源码路径以本包根目录为基准。
+
+- [正式资源来源](gp_battleship_assets_sources.md)
+- [M17 海战棋　B](gp_battleship_development.md)
+- [Ocean art direction and implementation](gp_battleship_ocean_art.md)
+- [Asset sources and licenses](gp_battleship_prototype_assets_sources.md)
