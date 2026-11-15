@@ -8,7 +8,7 @@ path="res://.godot/imported/hms_belfast_destroyed.glb-dffb69352e44afdae8e9502229
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/fleet/hms_belfast_destroyed.glb"
+source_file="res://games/minigame/GP_battleship/assets/fleet/hms_belfast_destroyed.glb"
 dest_files=["res://.godot/imported/hms_belfast_destroyed.glb-dffb69352e44afdae8e95022296caa64.scn"]
 
 [params]

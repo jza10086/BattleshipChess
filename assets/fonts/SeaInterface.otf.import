@@ -7,7 +7,7 @@ path="res://.godot/imported/SeaInterface.otf-977df32409f9e07821bf76f2a1a6768e.fo
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/fonts/SeaInterface.otf"
+source_file="res://games/minigame/GP_battleship/assets/fonts/SeaInterface.otf"
 dest_files=["res://.godot/imported/SeaInterface.otf-977df32409f9e07821bf76f2a1a6768e.fontdata"]
 
 [params]

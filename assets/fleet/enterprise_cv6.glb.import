@@ -8,7 +8,7 @@ path="res://.godot/imported/enterprise_cv6.glb-6cf0816083c38f94d60842d064bf28b5.
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/fleet/enterprise_cv6.glb"
+source_file="res://games/minigame/GP_battleship/assets/fleet/enterprise_cv6.glb"
 dest_files=["res://.godot/imported/enterprise_cv6.glb-6cf0816083c38f94d60842d064bf28b5.scn"]
 
 [params]

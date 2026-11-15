@@ -1,8 +1,8 @@
 extends Control
 
 ## PartyAPI owns transport and lifecycle; this host owns the game and sends private team views.
-const Rules: Script = preload("res://games/minigame/gp_battleship/battleship_rules.gd")
-const BattleView: Script = preload("res://games/minigame/gp_battleship/battle_view.gd")
+const Rules: Script = preload("res://games/minigame/GP_battleship/battleship_rules.gd")
+const BattleView: Script = preload("res://games/minigame/GP_battleship/battle_view.gd")
 const ACTION: StringName = &"battleship/action"
 const VIEW: StringName = &"view"
 var api: PartyAPI

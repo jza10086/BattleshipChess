@@ -8,7 +8,7 @@ path="res://.godot/imported/yamato_battleship.glb-d0fb7df9524afa6e514ff846b41aea
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/yamato/yamato_battleship.glb"
+source_file="res://games/minigame/GP_battleship/assets/yamato/yamato_battleship.glb"
 dest_files=["res://.godot/imported/yamato_battleship.glb-d0fb7df9524afa6e514ff846b41aea9a.scn"]
 
 [params]

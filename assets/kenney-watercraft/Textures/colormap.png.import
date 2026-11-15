@@ -11,7 +11,7 @@ metadata={
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/kenney-watercraft/Textures/colormap.png"
+source_file="res://games/minigame/GP_battleship/assets/kenney-watercraft/Textures/colormap.png"
 dest_files=["res://.godot/imported/colormap.png-5475c6916071f55be1a1a79fe7b1d3fb.s3tc.ctex"]
 
 [params]

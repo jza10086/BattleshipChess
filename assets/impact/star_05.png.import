@@ -10,7 +10,7 @@ metadata={
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/impact/star_05.png"
+source_file="res://games/minigame/GP_battleship/assets/impact/star_05.png"
 dest_files=["res://.godot/imported/star_05.png-d9e598eec108d21f0598266124f95f62.ctex"]
 
 [params]

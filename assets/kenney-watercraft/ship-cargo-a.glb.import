@@ -8,7 +8,7 @@ path="res://.godot/imported/ship-cargo-a.glb-e1caa474a4257356bfd9bfb79a53167d.sc
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/kenney-watercraft/ship-cargo-a.glb"
+source_file="res://games/minigame/GP_battleship/assets/kenney-watercraft/ship-cargo-a.glb"
 dest_files=["res://.godot/imported/ship-cargo-a.glb-e1caa474a4257356bfd9bfb79a53167d.scn"]
 
 [params]

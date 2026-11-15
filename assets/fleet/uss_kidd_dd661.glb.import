@@ -8,7 +8,7 @@ path="res://.godot/imported/uss_kidd_dd661.glb-d92c3e7bd9258b33ef87279bc0dd6469.
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/fleet/uss_kidd_dd661.glb"
+source_file="res://games/minigame/GP_battleship/assets/fleet/uss_kidd_dd661.glb"
 dest_files=["res://.godot/imported/uss_kidd_dd661.glb-d92c3e7bd9258b33ef87279bc0dd6469.scn"]
 
 [params]

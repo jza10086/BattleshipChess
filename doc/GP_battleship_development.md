@@ -2,10 +2,10 @@
 
 来源：2026-11-07 架构审查及其最后实施记录。整理日期：2026-11-14。下列待办保留原状态；实施前核对本包源码与工作区，不以历史检查代替本次验收。
 
-[共享 G01–G03 任务](../../../protocols/godot_party_default_protocol/doc/godot_party_default_protocol_development.md) · [包说明](gp_battleship_guide.md)
+[共享 G01–G03 任务](../../../protocols/GP_default_protocol/doc/GP_default_protocol_development.md) · [包说明](GP_battleship_guide.md)
 
 
-包：`gp_battleship`。定位：[party_round.gd](../party_round.gd)、[battle_view.gd](../battle_view.gd) 的 `_rebuild_ships()`、[ship_display.tscn](../ship_display.tscn)。
+包：`GP_battleship`。定位：[party_round.gd](../party_round.gd)、[battle_view.gd](../battle_view.gd) 的 `_rebuild_ships()`、[ship_display.tscn](../ship_display.tscn)。
 
 2026-11-07 已实施，子模块提交 `57e09c7`。Godot 4.7.2 定向验证：既有三客户端真实大厅联机通过（私有视图、布阵归属、抢选、齐射和结算）；1920×1080 实际渲染/鼠标操作检查通过并查看截图；五组残骸切换、水线实例隔离、名字牌编辑值和默认翻译检查通过。结果边界/生命周期自动检查覆盖非房主消息、无效结果、观战房主无隐藏舰船节点、末轮弹着后结算、延迟期间取消、重复停止及唯一提交，均通过。
 

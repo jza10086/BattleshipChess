@@ -8,7 +8,7 @@ path="res://.godot/imported/boat-tug-b.glb-040bfe441bc9a5951ca191202d84c61c.scn"
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/kenney-watercraft/boat-tug-b.glb"
+source_file="res://games/minigame/GP_battleship/assets/kenney-watercraft/boat-tug-b.glb"
 dest_files=["res://.godot/imported/boat-tug-b.glb-040bfe441bc9a5951ca191202d84c61c.scn"]
 
 [params]

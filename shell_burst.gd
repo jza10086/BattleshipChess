@@ -1,6 +1,6 @@
 extends Node3D
 ## Local one-shot impact. Its parent places the origin at the publicly resolved shot.
-const STAR: Texture2D = preload("res://games/minigame/gp_battleship/assets/impact/star_05.png")
+const STAR: Texture2D = preload("res://games/minigame/GP_battleship/assets/impact/star_05.png")
 const DURATION: float = 0.95
 static var _puff: ArrayMesh
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()

@@ -8,7 +8,7 @@ path="res://.godot/imported/uss_gerald_r_ford_cvn78.glb-1e73376451793ee385949358
 
 [deps]
 
-source_file="res://games/minigame/gp_battleship/assets/fleet/uss_gerald_r_ford_cvn78.glb"
+source_file="res://games/minigame/GP_battleship/assets/fleet/uss_gerald_r_ford_cvn78.glb"
 dest_files=["res://.godot/imported/uss_gerald_r_ford_cvn78.glb-1e73376451793ee38594935821b48a7d.scn"]
 
 [params]
