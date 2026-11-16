@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://ddedpjhkcnrj6"
-path="res://.godot/imported/uss_gerald_r_ford_cvn78_destroyed.glb-d285899110056dac5e241db3484c6a06.scn"
+path="res://.godot/imported/uss_gerald_r_ford_cvn78_destroyed.glb-275f6ed25be3f5550a45583e6724a368.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/fleet/uss_gerald_r_ford_cvn78_destroyed.glb"
-dest_files=["res://.godot/imported/uss_gerald_r_ford_cvn78_destroyed.glb-d285899110056dac5e241db3484c6a06.scn"]
+dest_files=["res://.godot/imported/uss_gerald_r_ford_cvn78_destroyed.glb-275f6ed25be3f5550a45583e6724a368.scn"]
 
 [params]
 

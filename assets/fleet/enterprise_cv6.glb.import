@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://rnns2rdh5ot"
-path="res://.godot/imported/enterprise_cv6.glb-6cf0816083c38f94d60842d064bf28b5.scn"
+path="res://.godot/imported/enterprise_cv6.glb-7d1ad04d818d5f072fce1600219b3e11.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/fleet/enterprise_cv6.glb"
-dest_files=["res://.godot/imported/enterprise_cv6.glb-6cf0816083c38f94d60842d064bf28b5.scn"]
+dest_files=["res://.godot/imported/enterprise_cv6.glb-7d1ad04d818d5f072fce1600219b3e11.scn"]
 
 [params]
 

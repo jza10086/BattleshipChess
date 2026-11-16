@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dwhwfw64s2hiw"
-path="res://.godot/imported/uss_kidd_dd661.glb-d92c3e7bd9258b33ef87279bc0dd6469.scn"
+path="res://.godot/imported/uss_kidd_dd661.glb-ee0f5a020c4c4155a0058d427236db34.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/fleet/uss_kidd_dd661.glb"
-dest_files=["res://.godot/imported/uss_kidd_dd661.glb-d92c3e7bd9258b33ef87279bc0dd6469.scn"]
+dest_files=["res://.godot/imported/uss_kidd_dd661.glb-ee0f5a020c4c4155a0058d427236db34.scn"]
 
 [params]
 

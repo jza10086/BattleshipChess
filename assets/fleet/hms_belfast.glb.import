@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bnn6colbhw2sd"
-path="res://.godot/imported/hms_belfast.glb-dd24cb5b0a260119bf78f10222fefc84.scn"
+path="res://.godot/imported/hms_belfast.glb-4dc7de97406b041e992005de897cc294.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/fleet/hms_belfast.glb"
-dest_files=["res://.godot/imported/hms_belfast.glb-dd24cb5b0a260119bf78f10222fefc84.scn"]
+dest_files=["res://.godot/imported/hms_belfast.glb-4dc7de97406b041e992005de897cc294.scn"]
 
 [params]
 

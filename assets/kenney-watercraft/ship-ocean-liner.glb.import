@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://ceh26ea4ujeug"
-path="res://.godot/imported/ship-ocean-liner.glb-88c39c7070909ecc0069e75a55eabaf4.scn"
+path="res://.godot/imported/ship-ocean-liner.glb-f13b7ea3f9e9ee6b792b176e4718a626.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/kenney-watercraft/ship-ocean-liner.glb"
-dest_files=["res://.godot/imported/ship-ocean-liner.glb-88c39c7070909ecc0069e75a55eabaf4.scn"]
+dest_files=["res://.godot/imported/ship-ocean-liner.glb-f13b7ea3f9e9ee6b792b176e4718a626.scn"]
 
 [params]
 

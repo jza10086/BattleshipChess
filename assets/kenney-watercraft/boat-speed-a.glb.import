@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bnj46cfkqnkav"
-path="res://.godot/imported/boat-speed-a.glb-487487a36cd4dc808681c2521a86bc3f.scn"
+path="res://.godot/imported/boat-speed-a.glb-febf3232046b81f5ec71f8bb6879b3d8.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/kenney-watercraft/boat-speed-a.glb"
-dest_files=["res://.godot/imported/boat-speed-a.glb-487487a36cd4dc808681c2521a86bc3f.scn"]
+dest_files=["res://.godot/imported/boat-speed-a.glb-febf3232046b81f5ec71f8bb6879b3d8.scn"]
 
 [params]
 

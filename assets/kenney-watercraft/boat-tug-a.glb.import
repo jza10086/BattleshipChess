@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://fyax34vujft4"
-path="res://.godot/imported/boat-tug-a.glb-9f04453fc3cea5ee71ed706fa7bf1fdf.scn"
+path="res://.godot/imported/boat-tug-a.glb-3e57317b1f6bf57b2b7daadf575a1fbd.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/kenney-watercraft/boat-tug-a.glb"
-dest_files=["res://.godot/imported/boat-tug-a.glb-9f04453fc3cea5ee71ed706fa7bf1fdf.scn"]
+dest_files=["res://.godot/imported/boat-tug-a.glb-3e57317b1f6bf57b2b7daadf575a1fbd.scn"]
 
 [params]
 

@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://27cb763gmmu0"
-path="res://.godot/imported/uss_kidd_dd661_destroyed.glb-80e92516201ff152b04101698c5107ec.scn"
+path="res://.godot/imported/uss_kidd_dd661_destroyed.glb-c35c29200bd55523dbc502c54a44222e.scn"
 
 [deps]
 
 source_file="res://games/minigame/GP_battleship/assets/fleet/uss_kidd_dd661_destroyed.glb"
-dest_files=["res://.godot/imported/uss_kidd_dd661_destroyed.glb-80e92516201ff152b04101698c5107ec.scn"]
+dest_files=["res://.godot/imported/uss_kidd_dd661_destroyed.glb-c35c29200bd55523dbc502c54a44222e.scn"]
 
 [params]
 
