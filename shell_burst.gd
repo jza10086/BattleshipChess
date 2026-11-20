@@ -17,7 +17,7 @@ func play(sinking: bool, cell_seed: int) -> void:
 	flash.modulate = Color(1.0, 0.92, 0.49)
 	flash.position.y = 0.32
 	add_child(flash)
-	var pulse: Tween = create_tween().set_parallel(true)
+	var pulse: Tween = _track_tween().set_parallel(true)
 	pulse.tween_property(flash, "scale", Vector3.ONE * 1.45, 0.12).from(Vector3.ONE * 0.28)
 	pulse.tween_property(flash, "modulate:a", 0.0, 0.17)
 	for i: int in range(8):
@@ -30,7 +30,7 @@ func play(sinking: bool, cell_seed: int) -> void:
 				0.10, 0.80, 0.38, Color("#535866") if i % 4 else Color("#79777a"), 0.0)
 		_particle(Vector3.UP * 0.18, outward * _rng.randf_range(0.65, 1.22) + Vector3.UP * _rng.randf_range(1.3, 2.0),
 			0.03, 0.65, _rng.randf_range(0.07, 0.12), Color("#e99a48"), 1.65)
-	create_tween().tween_callback(queue_free).set_delay(DURATION)
+	_track_tween().tween_callback(queue_free).set_delay(DURATION)
 
 func _particle(origin: Vector3, travel: Vector3, delay: float, lifetime: float, radius: float, color: Color, drop: float) -> void:
 	var chunk: MeshInstance3D = MeshInstance3D.new()
@@ -43,7 +43,7 @@ func _particle(origin: Vector3, travel: Vector3, delay: float, lifetime: float, 
 	chunk.rotation = Vector3(_rng.randf() * PI, _rng.randf() * TAU, _rng.randf() * PI)
 	chunk.hide()
 	add_child(chunk)
-	var tween: Tween = create_tween()
+	var tween: Tween = _track_tween()
 	tween.tween_callback(chunk.show).set_delay(delay)
 	tween.tween_method(func(t: float) -> void:
 		chunk.position = origin + travel * t - Vector3.UP * drop * t * t
@@ -66,3 +66,15 @@ static func _faceted_puff() -> ArrayMesh:
 			surface.set_normal(normal)
 			surface.add_vertex(vertices[i + j])
 	return surface.commit()
+
+var _tweens: Array[Tween] = []
+
+func _track_tween() -> Tween:
+	var tween: Tween = create_tween()
+	_tweens.append(tween)
+	return tween
+
+func advance(age: float) -> void:
+	if age > 0.0:
+		for tween: Tween in _tweens:
+			tween.custom_step(age)

@@ -1,4 +1,5 @@
 [gd_scene format=3 uid="uid://bc5l6hrw5bama"]
+[ext_resource type="PackedScene" path="res://games/assets/GP_default_ui/challenge_hud.tscn" id="clock_hud"]
 
 [ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/GP_battleship/assets/fonts/SeaInterface.otf" id="1_slv5s"]
 [ext_resource type="Script" uid="uid://qdy2srjufvop" path="res://games/minigame/GP_battleship/battle_view.gd" id="2_nmmmd"]
@@ -837,171 +838,26 @@ text = "红队海域"
 font = ExtResource("1_slv5s")
 font_size = 52
 
-[node name="GameHUD" type="CanvasLayer" parent="." unique_id=507270370]
+[node name="GameHUD" parent="." instance=ExtResource("clock_hud")]
 unique_name_in_owner = true
-layer = -2
 
-[node name="Controls" type="Control" parent="GameHUD" unique_id=402917163]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme = SubResource("Theme_ico3i")
-
-[node name="MarginContainer1" type="MarginContainer" parent="GameHUD/Controls" unique_id=1037124088]
-layout_mode = 0
-anchor_right = 1.0
-mouse_filter = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 22
-theme_override_constants/margin_right = 32
-
-[node name="HBoxContainer1" type="HBoxContainer" parent="GameHUD/Controls/MarginContainer1" unique_id=2023836345]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="VBoxContainer1" type="VBoxContainer" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1" unique_id=1268336674]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-
-[node name="Status" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1/VBoxContainer1" unique_id=1367258861]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
-theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 30
-text = "海战棋 · 蓝队"
-
-[node name="Roster" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1/VBoxContainer1" unique_id=1985535256]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
-theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 21
-autowrap_mode = 3
-
-[node name="Event" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1/VBoxContainer1" unique_id=1036069835]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
-theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 23
-
-[node name="Clock" type="Label" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1" unique_id=2124133951]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
-theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 28
-text = "60 秒"
-
-[node name="ShowRules" type="Button" parent="GameHUD/Controls/MarginContainer1/HBoxContainer1" unique_id=548640343]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 0
-text = "规则"
-
-[node name="MarginContainer2" type="MarginContainer" parent="GameHUD/Controls" unique_id=2089191214]
-layout_mode = 0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_vertical = 0
-mouse_filter = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 24
-
-[node name="VBoxContainer1" type="VBoxContainer" parent="GameHUD/Controls/MarginContainer2" unique_id=1548386749]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="Placement" type="HBoxContainer" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1" unique_id=1234818575]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="ShipChoice" type="OptionButton" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=1402396307]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="Rotate" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=146219243]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 0
-text = "横向 / 纵向"
-
-[node name="Shuffle" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=523974071]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 0
-text = "随机摆放我的舰船"
-
-[node name="ReadyButton" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=1888363209]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 0
-text = "我的布阵完成"
-
-[node name="Switch" type="Button" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1/Placement" unique_id=1870133480]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 0
-text = "切换测试队伍"
-
-[node name="Hint" type="Label" parent="GameHUD/Controls/MarginContainer2/VBoxContainer1" unique_id=341563750]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
-theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 23
-text = "选择一艘舰船，点击己方海域布阵"
-
-[node name="Rules" type="PanelContainer" parent="GameHUD/Controls" unique_id=1496453077]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
+[node name="Status" parent="GameHUD" index="0"]
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -100.0
+offset_right = 100.0
+offset_top = 18.0
 
-[node name="VBoxContainer1" type="VBoxContainer" parent="GameHUD/Controls/Rules" unique_id=344804504]
-layout_mode = 2
-
-[node name="RulesText" type="Label" parent="GameHUD/Controls/Rules/VBoxContainer1" unique_id=1138156661]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.95686275, 0.8509804, 1)
-theme_override_colors/font_outline_color = Color(0.09019608, 0.24313726, 0.28235295, 1)
+[node name="RoundClock" parent="GameHUD/Status" index="0"]
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 40
 theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 24
-text = "海战棋
+text = ""
 
-2–8 人随机分为蓝红两队，共用各队舰队。
-每队五艘舰船随机均分，每人只放置自己的舰船。
-全员确认或60秒后出航。双方在同一回合同时选点。
-每人一发，抢选敌方空闲格；同队先到先得，可改选空闲格。
-双方选齐或超时后同时发射；未选目标者本轮不发射。
-人数较多队随机产生人数差额的哑弹，不得分且不消耗目标格。
-命中 +1 分。全部炮弹结算后判断胜负，同时全灭为平局。
-胜队每人 +100 分，按总分排名；平局均无胜利加分。
-整队离线判负。1人测试依次操作两队，选齐后一起发射。
+[node name="RankingsToggle" parent="GameHUD/Status" index="1"]
+visible = false
 
-Esc 打开派对菜单。"
+[node name="MenuHint" parent="GameHUD" index="1"]
+visible = false
 
-[node name="CloseRules" type="Button" parent="GameHUD/Controls/Rules/VBoxContainer1" unique_id=702445005]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 0
-text = "关闭"
+[editable path="GameHUD"]

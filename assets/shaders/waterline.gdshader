@@ -19,7 +19,7 @@ void fragment() {
 	float breakup = smoothstep(-0.72, -0.12, sin(p.x * 3.4 - p.y * 5.1 + TIME * 0.65 + phase));
 	float cycle = fract(TIME * 0.23 + phase * 0.17);
 	float ring_distance = 0.13 + cycle * 0.30;
-	float ring = (1.0 - smoothstep(0.015, 0.037 + aa, abs(distance_to_hull - ring_distance))) * (1.0 - cycle);
+	float ring = (1.0 - smoothstep(0.015, 0.037 + aa, abs(distance_to_hull - ring_distance))) * smoothstep(0.0, 0.25, cycle) * (1.0 - smoothstep(0.48, 1.0, cycle));
 	float outside = smoothstep(-0.04, 0.02, distance_to_hull);
 	ALBEDO = foam_color;
 	ALPHA = outside * (contact * 0.43 + ring * 0.24) * breakup * opacity;

@@ -23,7 +23,7 @@ msgid "controls.mouse"
 msgstr "鼠标左键"
 
 msgid "controls.primary"
-msgstr "摆放自己的舰船 / 抢选敌方轰炸目标"
+msgstr "拿起或放下己方舰船 / 选择轰炸目标（R 旋转，右键取消，单人布阵按空格切队）"
 
 msgid "controls.menu"
 msgstr "打开派对菜单"

@@ -5,14 +5,12 @@ const LENGTHS: Array[int] = [5, 4, 4, 3, 2]
 var teams: Array = [[], []]
 var connected: Dictionary = {}
 var fleets: Array = [[], []]
-var locked: Array[bool] = [false, false]
-var ship_owners: Array = [[], []]
-var placement_ready: Array = [{}, {}]
 var shots: Array[Dictionary] = []
 var targets: Array = [{}, {}]
 var scores: Dictionary[String, int] = {}
 var phase: String = "placement"
 var turn_number: int = 0
+var _fleet_destroyed: bool = false
 var winner: int = -1
 var solo: bool = false
 var solo_team: int = 0
@@ -38,8 +36,7 @@ func start(players: Array[Dictionary], public_seed: int) -> void:
 	# Public round seeds must not let clients reconstruct hidden ship positions or dud selection.
 	random.randomize()
 	fleets = [random_fleet(), random_fleet()]
-	for team: int in range(2):
-		_assign_ships(team)
+
 
 func team_of(player_id: String) -> int:
 	for team: int in range(2):
@@ -58,59 +55,6 @@ func members(team: int) -> Array[String]:
 		if connected[id]:
 			result.append(id)
 	return result
-
-## Shuffle both seats and ship indices so extra ships and ship types are random.
-func _assign_ships(team: int) -> void:
-	var players: Array = teams[0 if solo else team].duplicate()
-	var indices: Array = range(LENGTHS.size())
-	for values: Array in [players, indices]:
-		for index: int in range(values.size() - 1, 0, -1):
-			var other: int = random.randi_range(0, index)
-			var value: Variant = values[index]
-			values[index] = values[other]
-			values[other] = value
-	ship_owners[team].resize(LENGTHS.size())
-	for index: int in range(indices.size()):
-		ship_owners[team][indices[index]] = players[index % players.size()]
-
-func owned_ships(team: int, player_id: String) -> Array[int]:
-	var result: Array[int] = []
-	for index: int in range(LENGTHS.size()):
-		if ship_owners[team][index] == player_id:
-			result.append(index)
-	return result
-
-func ready_count(team: int) -> int:
-	var count: int = 0
-	for id: String in members(team):
-		if placement_ready[team].has(id):
-			count += 1
-	return count
-
-func _update_placement_locks() -> void:
-	for team: int in range(2):
-		locked[team] = ready_count(team) == members(team).size()
-	if locked[0] and locked[1]:
-		begin_battle()
-
-## Keep every other player's layout; only reassign ships whose owner disconnected.
-func _redistribute_ships(team: int) -> void:
-	var active: Array[String] = members(team)
-	for index: int in range(LENGTHS.size()):
-		if connected[ship_owners[team][index]]:
-			continue
-		var candidates: Array[String] = []
-		var least: int = LENGTHS.size()
-		for id: String in active:
-			var count: int = owned_ships(team, id).size()
-			if count < least:
-				candidates.clear()
-				least = count
-			if count == least:
-				candidates.append(id)
-		var recipient: String = candidates[random.randi_range(0, candidates.size() - 1)]
-		ship_owners[team][index] = recipient
-		placement_ready[team].erase(recipient)
 
 static func cells(ship: Dictionary) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
@@ -145,40 +89,23 @@ func _random_ship(index: int, occupied: Array) -> Dictionary:
 					candidates.append(ship)
 	return candidates[random.randi_range(0, candidates.size() - 1)]
 
-func _shuffle_owned(team: int, player_id: String) -> void:
-	for index: int in owned_ships(team, player_id):
-		var occupied: Array = fleets[team].duplicate()
-		occupied.remove_at(index)
-		fleets[team][index] = _random_ship(index, occupied)
-
 ## The controller supplies the authenticated player ID; payload is an untrusted network boundary.
 func act(player_id: String, action: Dictionary) -> bool:
 	var team: int = controlled_team(player_id)
 	if team < 0 or not connected[player_id] or typeof(action.get("turn")) != TYPE_INT or action.turn != turn_number:
 		return false
 	var kind: Variant = action.get("kind")
-	if kind == "switch" and solo and phase in ["placement", "battle"]:
+	if kind == "switch" and solo and phase == "placement":
 		solo_team = 1 - solo_team
 		return true
 	if phase == "placement":
-		if placement_ready[team].has(player_id):
+		if action.get("team") != team:
 			return false
-		if kind == "shuffle":
-			_shuffle_owned(team, player_id)
-			return true
-		if kind == "ready":
-			placement_ready[team][player_id] = true
-			_update_placement_locks()
-			if solo and phase == "placement" and not locked[1 - team]:
-				solo_team = 1 - team
-			return true
 		if kind == "place":
 			for key: String in ["index", "x", "y"]:
 				if typeof(action.get(key)) != TYPE_INT:
 					return false
 			if typeof(action.get("vertical")) != TYPE_BOOL or action.index < 0 or action.index >= LENGTHS.size() or action.x < 0 or action.x >= SIZE or action.y < 0 or action.y >= SIZE:
-				return false
-			if ship_owners[team][action.index] != player_id:
 				return false
 			var next: Array = fleets[team].duplicate(true)
 			next[action.index].x = action.x
@@ -205,7 +132,6 @@ func act(player_id: String, action: Dictionary) -> bool:
 	return true
 
 func begin_battle() -> void:
-	locked = [true, true]
 	phase = "battle"
 	turn_number += 1
 	targets = [{}, {}]
@@ -229,7 +155,7 @@ func all_targeted() -> bool:
 
 ## Resolve every selected shell before deciding victory. Duds never enter fired-cell history.
 func resolve_salvo() -> void:
-	if phase != "battle":
+	if phase not in ["battle", "countdown"]:
 		return
 	last_salvo.clear()
 	for team: int in range(2):
@@ -263,12 +189,17 @@ func resolve_salvo() -> void:
 		for ship: Dictionary in fleets[team]:
 			if not is_sunk(team, ship):
 				destroyed[team] = false
-	if destroyed[0] or destroyed[1]:
-		phase = "finished"
+	phase = "impact"
+	_fleet_destroyed = destroyed[0] or destroyed[1]
+	if _fleet_destroyed:
 		winner = -1 if destroyed[0] and destroyed[1] else (1 if destroyed[0] else 0)
 	targets = [{}, {}]
-	turn_number += 1
-	solo_team = 0
+
+func finish_impact() -> void:
+	if _fleet_destroyed:
+		phase = "finished"
+	else:
+		begin_battle()
 
 func is_sunk(team: int, ship: Dictionary) -> bool:
 	for cell: Vector2i in cells(ship):
@@ -294,10 +225,6 @@ func update_connections(players: Array[Dictionary]) -> void:
 		winner = -1 if empty_a and empty_b else (1 if empty_a else 0)
 		phase = "finished"
 		targets = [{}, {}]
-	elif phase == "placement":
-		for team: int in range(2):
-			_redistribute_ships(team)
-		_update_placement_locks()
 
 func view(player_id: String) -> Dictionary:
 	var team: int = controlled_team(player_id)
@@ -307,12 +234,8 @@ func view(player_id: String) -> Dictionary:
 			if board == team or phase == "finished" or is_sunk(board, ship):
 				var shown: Dictionary = ship.duplicate()
 				shown["sunk"] = is_sunk(board, ship)
-				shown["owner"] = ship_owners[board][ship.index]
 				visible[board].append(shown)
 	return {"phase": phase, "team": team, "teams": teams.duplicate(true), "solo": solo,
-		"owned_ships": owned_ships(team, player_id) if team >= 0 else [],
-		"placement_ready": team >= 0 and placement_ready[team].has(player_id),
-		"ready_counts": [ready_count(0), ready_count(1)], "locked": locked.duplicate(),
 		"fleets": visible, "turn_number": turn_number, "winner": winner,
 		"shots": shots.duplicate(true), "targets": targets[team].duplicate() if team >= 0 else {},
 		"last_salvo": last_salvo.duplicate(true), "scores": scores.duplicate(),

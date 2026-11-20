@@ -38,9 +38,7 @@ func _ready() -> void:
 	if api == null:
 		push_error("海战棋需要从派对大厅启动。")
 		return
-	view.set_localization(api.i18n)
 	view.host_clock = api.net.host_time_msec
-	view.set_roster(api.get_players())
 	view.action_requested.connect(_send_action)
 	var content: Dictionary = briefing.read_content(get_script().resource_path.get_base_dir().path_join("manifest.json"), api)
 	content["controls"] = [{"binding": api.i18n.text(&"controls.mouse"), "description": api.i18n.text(&"controls.primary")},
@@ -76,8 +74,10 @@ func _process(_delta: float) -> void:
 	if api.net.host_time_msec() >= _end_msec:
 		if model.phase == "placement":
 			model.begin_battle()
-		elif model.phase == "battle":
+		elif model.phase in ["battle", "countdown"]:
 			model.resolve_salvo()
+		elif model.phase == "impact":
+			model.finish_impact()
 		_publish()
 
 func _send_action(action: Dictionary) -> void:
@@ -145,9 +145,9 @@ func _message(sender: Dictionary, topic: StringName, payload: Variant) -> void:
 		change.erase("fleet_changes")
 		snapshot.merge(change, true)
 		snapshot["remaining"] = maxf(0.0, float(snapshot.end_msec - api.net.host_time_msec()) / 1000.0)
-		var impact_time: float = view.show_state(snapshot)
+		view.show_state(snapshot)
 		if snapshot.phase == "finished" and not _settling:
-			_open_settlement(payload.result, impact_time)
+			_open_settlement(payload.result)
 
 ## The protocol allows optional metrics/columns; this game's final scorecard requires its four columns.
 ## Called only at the receive boundary, after protocol validation has checked nested value types.
@@ -168,17 +168,15 @@ func _apply_action(player_id: String, action: Dictionary) -> void:
 	if not model.act(player_id, action):
 		return
 	if model.phase == "battle" and model.all_targeted():
-		model.resolve_salvo()
+		model.phase = "countdown"
 	_publish()
 
 func _players_changed() -> void:
-	view.i18n = api.i18n
-	view.set_roster(api.get_players())
 	if not _playing or _settling or _stopped or not api.is_host():
 		return
 	model.update_connections(api.get_players())
 	if model.phase == "battle" and model.all_targeted():
-		model.resolve_salvo()
+		model.phase = "countdown"
 	_publish()
 
 ## Never broadcast the full model: the host may itself be an unselected spectator.
@@ -186,7 +184,13 @@ func _publish() -> void:
 	var phase_key: String = "%s/%d" % [model.phase, model.turn_number]
 	if phase_key != _phase_key:
 		_phase_key = phase_key
-		_end_msec = api.net.host_time_msec() + 1000 * (PLACEMENT_SECONDS if model.phase == "placement" else _target_seconds)
+		var duration: int = _target_seconds * 1000
+		match model.phase:
+			"placement": duration = PLACEMENT_SECONDS * 1000
+			"countdown": duration = 3000
+			"impact": duration = ceili(BattleView.SALVO_SECONDS * 1000)
+			"finished": duration = 0
+		_end_msec = api.net.host_time_msec() + duration
 	_revision += 1
 	var recipients: Array[Dictionary] = api.get_players()
 	recipients.append_array(api.get_spectators())
@@ -230,14 +234,10 @@ func _publish() -> void:
 			return
 		_published_views[player.player_id] = current
 
-func _open_settlement(result: Dictionary, impact_time: float) -> void:
+func _open_settlement(result: Dictionary) -> void:
 	_settling = true
 	view.input_enabled = false
 	_result = result.duplicate(true)
-	if impact_time > 0.0:
-		await get_tree().create_timer(impact_time).timeout
-		if _stopped or not api.is_open():
-			return
 	settlement.configure(api, _result_presentation(result), request.request_id)
 	settlement.continued.connect(_submit_result)
 

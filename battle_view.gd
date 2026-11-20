@@ -4,12 +4,10 @@ signal action_requested(action: Dictionary)
 const ShellBurst: Script = preload("res://games/minigame/GP_battleship/shell_burst.gd")
 const Rules: Script = preload("res://games/minigame/GP_battleship/battleship_rules.gd")
 const ShipDisplay: Script = preload("res://games/minigame/GP_battleship/ship_display.gd")
-const DEFAULT_TEXT: Translation = preload("res://games/minigame/GP_battleship/i18n/zh_Hans.po")
 @export var ship_display_scene: PackedScene
 const ShotMarker: PackedScene = preload("res://games/minigame/GP_battleship/shot_marker.tscn")
 const TargetMarker: PackedScene = preload("res://games/minigame/GP_battleship/vote_marker.tscn")
 @onready var seas: Array[Node3D] = [$Models/BlueSea, $Models/RedSea]
-var i18n: RefCounted
 @onready var world: WorldEnvironment = %World
 @onready var sun: DirectionalLight3D = %Sun
 @onready var models: Node3D = %Models
@@ -18,22 +16,15 @@ var i18n: RefCounted
 @onready var _impacts: Node3D = %Impacts
 @onready var _marks: Node3D = %Marks
 @onready var _aim: MeshInstance3D = %Aim
-@onready var _status: Label = %Status
-@onready var _roster: Label = %Roster
-@onready var _event: Label = %Event
-@onready var _clock: Label = %Clock
-@onready var _hint: Label = %Hint
-@onready var _placement: HBoxContainer = %Placement
-@onready var _ship_choice: OptionButton = %ShipChoice
-@onready var _rotate: Button = %Rotate
-@onready var _shuffle: Button = %Shuffle
-@onready var _ready_button: Button = %ReadyButton
-@onready var _switch: Button = %Switch
-@onready var _rules: PanelContainer = %Rules
+@onready var _clock: Label = $GameHUD/Status/RoundClock
 var _state: Dictionary = {}
 var _shown_fleets: Array = []
 var _shown_marks: Dictionary = {}
-var _names: Dictionary = {}
+const FALL_SECONDS: float = 0.55
+const SALVO_SECONDS: float = FALL_SECONDS + ShellBurst.DURATION + 0.1
+var _salvo_turn: int = -1
+var _landing: Tween
+var _footprint: MeshInstance3D = MeshInstance3D.new()
 var _vertical: bool = false
 var _selected: int = 0
 var _carrying: bool = false
@@ -51,149 +42,98 @@ var _hover_team: int = -1
 var _remaining: float = 0.0
 ## Formal entry supplies the shared clock; standalone previews use local delta.
 var host_clock: Callable
-var _presented_shots: int = 0
 
 func _ready() -> void:
-	assert(ship_display_scene != null, "Missing ship display scene")
-	_refresh_text()
-	%ShowRules.pressed.connect(func() -> void: _rules.show())
-	%CloseRules.pressed.connect(_rules.hide)
-	_ship_choice.allow_reselect = true
 	_ghost_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_ghost_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	_ship_choice.item_selected.connect(func(index: int) -> void:
-		_selected = _ship_choice.get_item_id(index)
-		_grip = 0
-		_carrying = true)
-	_rotate.pressed.connect(func() -> void:
-		_carrying = true
-		_vertical = not _vertical
-		_rotate.text = _text(&"placement.vertical" if _vertical else &"placement.horizontal"))
-	_shuffle.pressed.connect(func() -> void: _send({"kind": "shuffle"}))
-	_ready_button.pressed.connect(func() -> void: _send({"kind": "ready"}))
-	_switch.pressed.connect(func() -> void: _send({"kind": "switch"}))
-	_placement.hide()
-	_clock.text = ""
-	_status.text = ""
-	_hint.text = ""
+	_footprint.mesh = BoxMesh.new()
+	_footprint.material_override = _ghost_material
+	_footprint.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	models.add_child(_footprint)
+	_footprint.hide()
 
-## The standalone view preview uses the same package Translation as formal play.
-func _text(key: StringName, parameters: Dictionary = {}) -> String:
-	return i18n.text(key, parameters) if i18n != null else String(DEFAULT_TEXT.get_message(key)).format(parameters)
-
-func set_localization(localization: RefCounted) -> void:
-	i18n = localization
-	_refresh_text()
-
-func _refresh_text() -> void:
-	%ShowRules.text = _text(&"rules.open")
-	%CloseRules.text = _text(&"rules.close")
-	%RulesText.text = _text(&"rules.body")
-	%BlueSeaLabel.text = _text(&"sea.blue")
-	%RedSeaLabel.text = _text(&"sea.red")
-	_rotate.text = _text(&"placement.vertical" if _vertical else &"placement.horizontal")
-	_shuffle.text = _text(&"placement.shuffle")
-	_switch.text = _text(&"placement.switch")
-	_ready_button.text = _text(&"placement.ready")
-
-func set_roster(players: Array[Dictionary]) -> void:
-	for player: Dictionary in players:
-		_names[player.player_id] = player.name if player.connected else _text(&"player.offline", {"name": player.name})
-
-## Apply a filtered host view. Return the duration of a fresh impact so the final shot can be seen before results.
-func show_state(value: Dictionary) -> float:
-	var previous_shots: int = value.shots.size() if _state.is_empty() else _presented_shots
-	_presented_shots = value.shots.size()
-	if _state.is_empty() or _preview_team != value.team or value.phase != "placement" or value.placement_ready or _selected not in value.owned_ships:
+func show_state(value: Dictionary) -> void:
+	if _preview_team != value.team or value.phase != "placement":
 		_cancel_move()
 	_preview_team = value.team
 	_state = value
 	_remaining = value.remaining
-	var team: int = value.team
-	var team_name: String = _text(&"team.spectator" if team < 0 else (&"team.blue" if team == 0 else &"team.red"))
-	_status.text = _text(&"hud.solo_status" if value.solo else &"hud.status", {"team": team_name})
-	var names: Array[String] = []
-	for board: int in range(2):
-		var team_names: Array[String] = []
-		for id: String in value.teams[board]:
-			team_names.append(_names[id])
-		names.append(_text(&"hud.team_roster", {"team": _text(&"team.blue" if board == 0 else &"team.red"), "names": "、".join(team_names)}))
-	_roster.text = "    |    ".join(names)
-	var placement: bool = value.phase == "placement"
-	_placement.visible = team >= 0 and (placement or value.solo)
-	for control: Control in [_ship_choice, _rotate, _shuffle, _ready_button]:
-		control.visible = placement
-	_switch.visible = value.solo
-	var offered: Array[int] = []
-	for index: int in range(_ship_choice.item_count):
-		offered.append(_ship_choice.get_item_id(index))
-	if offered != value.owned_ships:
-		_ship_choice.clear()
-		var ship_keys: Array[StringName] = [&"ship.ford", &"ship.yamato", &"ship.enterprise", &"ship.belfast", &"ship.kidd"]
-		for index: int in value.owned_ships:
-			_ship_choice.add_item(_text(ship_keys[index]), index)
-		if not value.owned_ships.is_empty():
-			if _selected not in value.owned_ships:
-				_selected = value.owned_ships[0]
-			_ship_choice.select(_ship_choice.get_item_index(_selected))
-	for button: BaseButton in [_ship_choice, _rotate, _shuffle, _ready_button]:
-		button.disabled = team < 0 or value.placement_ready
-	_ready_button.text = _text(&"placement.waiting" if value.placement_ready else &"placement.ready")
-	if placement:
-		_event.text = _text(&"hud.placement", {"blue": value.ready_counts[0], "red": value.ready_counts[1]})
-	else:
-		_event.text = _text(&"hud.salvo", {"round": value.turn_number, "blue": value.targeted[0],
-			"blue_total": value.eligible[0], "red": value.targeted[1], "red_total": value.eligible[1]})
-	if value.phase == "finished":
-		_event.text = _text(&"result.draw") if value.winner < 0 else _text(&"result.winner", {"team": _text(&"team.blue" if value.winner == 0 else &"team.red")})
-	elif not value.last_salvo.is_empty():
-		var hits: int = 0
-		var duds: int = 0
-		for shell: Dictionary in value.last_salvo:
-			if shell.hit:
-				hits += 1
-			if shell.dud:
-				duds += 1
-		_event.text += "    " + _text(&"hud.last_salvo", {"shells": value.last_salvo.size(), "hits": hits, "duds": duds})
-	_hint.text = _text(&"hint.placement" if placement else &"hint.target")
-	if not placement and team >= 0 and value.own_target >= 0:
-		_hint.text = _text(&"hint.selected", {"cell": coordinate(value.own_target)})
-	if not placement:
-		var totals: Array[String] = []
-		for id: String in value.scores:
-			totals.append(_text(&"hud.player_score", {"name": _names[id], "score": value.scores[id]}))
-		_roster.text += "\n" + " · ".join(totals)
-	if placement and team >= 0:
-		_status.text = _text(&"hud.assignment", {"status": _status.text, "count": value.owned_ships.size()})
-		if value.placement_ready:
-			_hint.text = _text(&"hint.waiting")
+	if value.phase == "impact" and _salvo_turn != value.turn_number:
+		_salvo_turn = value.turn_number
+		var elapsed: float = 0.0
+		if host_clock.is_valid():
+			elapsed = clampf(SALVO_SECONDS - (value.end_msec - int(host_clock.call())) / 1000.0, 0.0, SALVO_SECONDS)
+		if elapsed < FALL_SECONDS:
+			for shot: Dictionary in value.last_salvo:
+				_drop_shell(shot, elapsed)
+			_landing = _impacts.create_tween()
+			_landing.tween_callback(_show_board).set_delay(FALL_SECONDS - elapsed)
 		else:
-			_hint.text = _text(&"hint.owned")
-	if team < 0:
-		_hint.text = _text(&"hint.spectator")
+			_show_board()
+			for shot: Dictionary in value.last_salvo:
+				_land_shell(shot, elapsed - FALL_SECONDS)
+	elif value.phase != "impact":
+		_show_board()
+
+func _show_board() -> void:
+	var value: Dictionary = _state
 	if value.fleets != _shown_fleets:
 		_shown_fleets = value.fleets.duplicate(true)
 		_rebuild_ships()
-	for ship: ShipDisplay in _ships.get_children():
-		ship.show_owner(placement)
 	var marks: Dictionary = {"shots": value.shots, "targets": value.targets, "team": value.team}
 	if marks != _shown_marks:
 		_shown_marks = marks.duplicate(true)
 		_rebuild_marks()
 
-	var impact_time: float = 0.0
-	for i: int in range(previous_shots, value.shots.size()):
-		var shot: Dictionary = value.shots[i]
-		if shot.hit:
-			var burst: ShellBurst = ShellBurst.new()
-			burst.position = _cell_position(1 - shot.by, shot.cell) + Vector3.UP * 0.20
-			_impacts.add_child(burst)
-			burst.play(shot.sunk >= 0, i * 100 + shot.cell)
-			impact_time = ShellBurst.DURATION
-	return impact_time
+func _drop_shell(shot: Dictionary, elapsed: float) -> void:
+	var shell: MeshInstance3D = MeshInstance3D.new()
+	var ball: SphereMesh = SphereMesh.new()
+	ball.radius = 0.14
+	ball.height = 0.34
+	shell.mesh = ball
+	var steel: StandardMaterial3D = StandardMaterial3D.new()
+	steel.albedo_color = Color(0.16, 0.18, 0.21)
+	shell.material_override = steel
+	_impacts.add_child(shell)
+	var target: Vector3 = _cell_position(1 - shot.by, shot.cell)
+	shell.global_position = target + Vector3.UP * 8.0
+	var fall: Tween = shell.create_tween()
+	fall.tween_property(shell, "global_position", target, FALL_SECONDS).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fall.tween_callback(func() -> void:
+		shell.queue_free()
+		_land_shell(shot, 0.0))
+	fall.custom_step(elapsed)
 
-static func coordinate(cell: int) -> String:
-	return String.chr(65 + cell % 10) + str(cell / 10 + 1)
+func _land_shell(shot: Dictionary, age: float) -> void:
+	var target: Vector3 = _cell_position(1 - shot.by, shot.cell)
+	if shot.hit and age < ShellBurst.DURATION:
+		var burst: ShellBurst = ShellBurst.new()
+		_impacts.add_child(burst)
+		burst.global_position = target + Vector3.UP * 0.20
+		burst.play(shot.sunk >= 0, shot.cell)
+		burst.advance(age)
+	elif not shot.hit and age < 0.85:
+		_splash(target, age)
+
+func _splash(target: Vector3, age: float) -> void:
+	var ripple: MeshInstance3D = MeshInstance3D.new()
+	var ring: TorusMesh = TorusMesh.new()
+	ring.inner_radius = 0.42
+	ring.outer_radius = 0.5
+	ripple.mesh = ring
+	var foam: StandardMaterial3D = StandardMaterial3D.new()
+	foam.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	foam.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	foam.albedo_color = Color(0.78, 0.96, 1, 0.85)
+	ripple.material_override = foam
+	_impacts.add_child(ripple)
+	ripple.global_position = target
+	ripple.scale = Vector3(0.18, 0.25, 0.18)
+	var wave: Tween = ripple.create_tween().set_parallel()
+	wave.tween_property(ripple, "scale", Vector3(2, 0.12, 2), 0.85)
+	wave.tween_property(foam, "albedo_color:a", 0.0, 0.85)
+	wave.chain().tween_callback(ripple.queue_free)
+	wave.custom_step(age)
 
 func _clear(parent: Node) -> void:
 	for child: Node in parent.get_children():
@@ -212,17 +152,17 @@ func _rebuild_ships() -> void:
 				_sources[ship.index] = holder
 			holder.global_position = seas[board].to_global(Vector3(ship.x - 4.5, 0, ship.y - 4.5))
 			holder.position += Vector3(0, 0, (ship.length - 1) * 0.5) if ship.vertical else Vector3((ship.length - 1) * 0.5, 0, 0)
-			var captain: String = _text(&"ship.mine") if board == _state.team and ship.index in _state.owned_ships else _names[ship.owner].left(6)
-			holder.configure(ship, captain, _state.phase == "placement")
+			holder.configure(ship, "", false)
 
 ## End local presentation without disabling the controller's network processing.
 func stop() -> void:
+	if _landing != null:
+		_landing.kill()
 	_cancel_move()
 	input_enabled = false
 	set_process(false)
 	set_process_unhandled_input(false)
 	_aim.hide()
-	_rules.hide()
 	%GameHUD.hide()
 	_clear(_impacts)
 
@@ -242,17 +182,18 @@ func _rebuild_marks() -> void:
 		var marker: MeshInstance3D = TargetMarker.instantiate()
 		_marks.add_child(marker)
 		marker.global_position = _cell_position(1 - _state.team, cell)
-		marker.get_node("TargetOwner").text = _names[id].left(8)
+		marker.get_node("TargetOwner").hide()
 
 func _process(delta: float) -> void:
 	if _state.is_empty():
 		return
 	_remaining = maxf(0.0, float(_state.end_msec - int(host_clock.call())) / 1000.0) if host_clock.is_valid() else maxf(0.0, _remaining - delta)
-	_clock.text = _text(&"hud.clock", {"time": ceili(_remaining)}) if _state.phase != "finished" else ""
+	_clock.visible = _state.phase in ["placement", "battle", "countdown"]
+	_clock.text = str(ceili(_remaining))
 	_aim.visible = false
 	_hover = -1
 	_hover_team = -1
-	if not input_enabled or _rules.visible:
+	if not input_enabled or _state.phase not in ["placement", "battle"]:
 		_hide_preview()
 		return
 	_pick_cell(get_global_mouse_position())
@@ -279,6 +220,7 @@ func _pick_cell(mouse: Vector2) -> void:
 			return
 
 func _hide_preview() -> void:
+	_footprint.hide()
 	_preview_action.clear()
 	if is_instance_valid(_hidden_source):
 		_hidden_source.show()
@@ -294,12 +236,12 @@ func _cancel_move() -> void:
 func _owned_ship_at_cursor() -> int:
 	var cell: Vector2i = Vector2i(_hover % 10, _hover / 10)
 	for ship: Dictionary in _state.fleets[_state.team]:
-		if ship.index in _state.owned_ships and cell in Rules.cells(ship):
+		if cell in Rules.cells(ship):
 			return ship.index
 	return -1
 
 func _preview_move() -> void:
-	if _hover_team != _state.team or _state.placement_ready or _selected not in _state.owned_ships:
+	if _hover_team != _state.team:
 		_aim.hide()
 		return
 	if not _carrying:
@@ -321,21 +263,33 @@ func _preview_move() -> void:
 			_ghost.queue_free()
 		_ghost = source.intact_models[_selected].instantiate()
 		models.add_child(_ghost)
-		for mesh: MeshInstance3D in _ghost.find_children("*", "MeshInstance3D", true, false):
-			mesh.material_override = _ghost_material
-			mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_ghost_index = _selected
 	_ghost_material.albedo_color = Color(0.3, 1.0, 0.7, 0.68) if legal else Color(1.0, 0.2, 0.18, 0.75)
 	var center: Vector2 = Vector2(origin) + Vector2(axis) * (length - 1) * 0.5
-	_ghost.global_position = seas[_hover_team].to_global(Vector3(center.x - 4.5, 0.06, center.y - 4.5))
+	_ghost.global_position = seas[_hover_team].to_global(Vector3(center.x - 4.5, 1.05, center.y - 4.5))
 	_ghost.rotation.y = -PI / 2.0 if _vertical else 0.0
+	_footprint.global_position = _ghost.global_position - Vector3.UP * 0.96
+	_footprint.scale = Vector3(length - 0.04, 0.025, 0.96)
+	_footprint.rotation.y = _ghost.rotation.y
+	_footprint.show()
 	_ghost.show()
 	source.hide()
 	_hidden_source = source
 	_aim.hide()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not input_enabled or _rules.visible or _state.is_empty():
+	if not input_enabled or _state.is_empty():
+		return
+	if event is InputEventKey and event.pressed and not event.echo and _state.phase == "placement":
+		if event.physical_keycode == KEY_R and _carrying:
+			_vertical = not _vertical
+			_pick_cell(get_global_mouse_position())
+		elif event.physical_keycode == KEY_SPACE and _state.solo:
+			_cancel_move()
+			_send({"kind": "switch"})
+		else:
+			return
+		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and _carrying:
 		_cancel_move()
@@ -345,16 +299,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		_pick_cell(event.position)
 		if _hover < 0:
 			return
-		if _state.phase == "placement" and not _state.placement_ready and _hover_team == _state.team and _selected in _state.owned_ships:
+		if _state.phase == "placement" and _hover_team == _state.team:
 			var picked: int = _owned_ship_at_cursor()
 			if not _carrying and picked >= 0:
 				_selected = picked
-				_ship_choice.select(_ship_choice.get_item_index(picked))
 				var ship: Dictionary = _state.fleets[_state.team].filter(func(item: Dictionary) -> bool: return item.index == picked).front()
 				_vertical = ship.vertical
-				_rotate.text = _text(&"placement.vertical" if _vertical else &"placement.horizontal")
 				_grip = _hover / 10 - ship.y if _vertical else _hover % 10 - ship.x
 				_carrying = true
+				_preview_move()
 			elif not _preview_action.is_empty():
 				_send(_preview_action.duplicate())
 				_cancel_move()
