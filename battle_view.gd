@@ -41,6 +41,7 @@ var _hover_team: int = -1
 var _remaining: float = 0.0
 ## Formal entry supplies the shared clock; standalone previews use local delta.
 var host_clock: Callable
+var _presented_shots: int = 0
 
 func _ready() -> void:
 	assert(ship_display_scene != null, "Missing ship display scene")
@@ -84,7 +85,8 @@ func set_roster(players: Array[Dictionary]) -> void:
 
 ## Apply a filtered host view. Return the duration of a fresh impact so the final shot can be seen before results.
 func show_state(value: Dictionary) -> float:
-	var previous_shots: int = value.shots.size() if _state.is_empty() else _state.shots.size()
+	var previous_shots: int = value.shots.size() if _state.is_empty() else _presented_shots
+	_presented_shots = value.shots.size()
 	_state = value
 	_remaining = value.remaining
 	var team: int = value.team
