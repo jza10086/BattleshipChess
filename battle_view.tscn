@@ -11,25 +11,37 @@
 [ext_resource type="Texture2D" uid="uid://cv6aon6p1yai3" path="res://games/minigame/GP_battleship/assets/textures/ocean_fields.png" id="4_ne6w7"]
 
 [sub_resource type="StyleBoxFlat" id="hp_bg"]
-bg_color = Color(0.05, 0.12, 0.15, 0.8)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_left = 8
-corner_radius_bottom_right = 8
+bg_color = Color(0.12, 0.13, 0.14, 1)
 
 [sub_resource type="StyleBoxFlat" id="hp_blue"]
 bg_color = Color(0.22, 0.64, 1, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_left = 8
-corner_radius_bottom_right = 8
 
 [sub_resource type="StyleBoxFlat" id="hp_red"]
 bg_color = Color(1, 0.32, 0.24, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_left = 8
-corner_radius_bottom_right = 8
+
+[sub_resource type="StyleBoxFlat" id="hud_panel"]
+bg_color = Color(0.055, 0.14, 0.17, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65, 0.83, 0.83, 1)
+
+[sub_resource type="StyleBoxFlat" id="hud_hover"]
+bg_color = Color(0.10, 0.26, 0.30, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.84, 0.96, 0.95, 1)
+
+[sub_resource type="StyleBoxFlat" id="hud_pressed"]
+bg_color = Color(0.035, 0.09, 0.11, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.48, 0.70, 0.71, 1)
 
 [sub_resource type="Theme" id="Theme_ico3i"]
 default_font = ExtResource("1_slv5s")
@@ -368,10 +380,10 @@ material_override = SubResource("StandardMaterial3D_s5iui")
 mesh = SubResource("BoxMesh_c8c2r")
 
 [node name="Label3D23" type="Label3D" parent="Models/BlueSea" unique_id=2025477283]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -4.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "A"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -386,10 +398,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D25" type="Label3D" parent="Models/BlueSea" unique_id=1190937371]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -3.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "B"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -404,10 +416,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D27" type="Label3D" parent="Models/BlueSea" unique_id=110994722]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -2.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "C"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -422,10 +434,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D29" type="Label3D" parent="Models/BlueSea" unique_id=1748510096]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -1.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "D"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -440,10 +452,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D31" type="Label3D" parent="Models/BlueSea" unique_id=1241591655]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -0.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "E"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -458,10 +470,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D33" type="Label3D" parent="Models/BlueSea" unique_id=500833876]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "F"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -476,10 +488,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D35" type="Label3D" parent="Models/BlueSea" unique_id=1087204984]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 1.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "G"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -494,10 +506,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D37" type="Label3D" parent="Models/BlueSea" unique_id=135885827]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 2.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "H"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -512,10 +524,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D39" type="Label3D" parent="Models/BlueSea" unique_id=980823080]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 3.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "I"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -530,10 +542,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D41" type="Label3D" parent="Models/BlueSea" unique_id=64644160]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 4.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "J"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -662,10 +674,10 @@ material_override = SubResource("StandardMaterial3D_s5iui")
 mesh = SubResource("BoxMesh_ecuch")
 
 [node name="Label3D23" type="Label3D" parent="Models/RedSea" unique_id=1352169758]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -4.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "A"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -680,10 +692,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D25" type="Label3D" parent="Models/RedSea" unique_id=228530031]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -3.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "B"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -698,10 +710,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D27" type="Label3D" parent="Models/RedSea" unique_id=1528671212]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -2.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "C"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -716,10 +728,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D29" type="Label3D" parent="Models/RedSea" unique_id=966813036]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -1.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "D"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -734,10 +746,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D31" type="Label3D" parent="Models/RedSea" unique_id=396971920]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -0.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "E"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -752,10 +764,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D33" type="Label3D" parent="Models/RedSea" unique_id=277042981]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "F"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -770,10 +782,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D35" type="Label3D" parent="Models/RedSea" unique_id=1702248872]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 1.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "G"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -788,10 +800,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D37" type="Label3D" parent="Models/RedSea" unique_id=132389811]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 2.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "H"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -806,10 +818,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D39" type="Label3D" parent="Models/RedSea" unique_id=1720148472]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 3.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "I"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -824,10 +836,10 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 [node name="Label3D41" type="Label3D" parent="Models/RedSea" unique_id=1055347782]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.08, -5.45)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 4.5, 0.02, -5.45)
 pixel_size = 0.012
-billboard = 1
-no_depth_test = true
+outline_size = 0
+modulate = Color(0.86, 0.98, 1, 0.64)
 text = "J"
 font = ExtResource("1_slv5s")
 font_size = 38
@@ -848,14 +860,17 @@ unique_name_in_owner = true
 [node name="Status" parent="GameHUD" index="0"]
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -100.0
-offset_right = 100.0
-offset_top = 18.0
+offset_left = -57.0
+offset_right = 57.0
+offset_top = 19.0
 
 [node name="RoundClock" parent="GameHUD/Status" index="0"]
+custom_minimum_size = Vector2(0, 64)
+vertical_alignment = 1
+theme_override_styles/normal = SubResource("hud_panel")
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 40
-theme_override_constants/outline_size = 6
+theme_override_constants/outline_size = 0
 text = ""
 
 [node name="RankingsToggle" parent="GameHUD/Status" index="1"]
@@ -866,10 +881,12 @@ visible = false
 
 [node name="BlueHealth" type="ProgressBar" parent="GameHUD"]
 unique_name_in_owner = true
-anchor_left = 0.17
-anchor_right = 0.42
-offset_top = 38.0
-offset_bottom = 58.0
+anchor_left = 0.0
+anchor_right = 0.5
+offset_left = 32.0
+offset_right = -82.0
+offset_top = 31.0
+offset_bottom = 71.0
 mouse_filter = 2
 theme_override_styles/background = SubResource("hp_bg")
 theme_override_styles/fill = SubResource("hp_blue")
@@ -880,10 +897,12 @@ show_percentage = false
 
 [node name="RedHealth" type="ProgressBar" parent="GameHUD"]
 unique_name_in_owner = true
-anchor_left = 0.58
-anchor_right = 0.83
-offset_top = 38.0
-offset_bottom = 58.0
+anchor_left = 0.5
+anchor_right = 1.0
+offset_left = 82.0
+offset_right = -32.0
+offset_top = 31.0
+offset_bottom = 71.0
 mouse_filter = 2
 theme_override_styles/background = SubResource("hp_bg")
 theme_override_styles/fill = SubResource("hp_red")
@@ -899,11 +918,15 @@ anchor_left = 0.5
 anchor_right = 0.5
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = -100.0
-offset_right = 100.0
-offset_top = -90.0
-offset_bottom = -34.0
-theme_override_font_sizes/font_size = 24
+offset_left = -190.0
+offset_right = 190.0
+offset_top = -180.0
+offset_bottom = -94.0
+theme_override_font_sizes/font_size = 34
+theme_override_styles/normal = SubResource("hud_panel")
+theme_override_styles/hover = SubResource("hud_hover")
+theme_override_styles/pressed = SubResource("hud_pressed")
+theme_override_styles/disabled = SubResource("hud_pressed")
 text = "布阵完毕"
 
 [node name="KeyHints" type="VBoxContainer" parent="GameHUD"]
