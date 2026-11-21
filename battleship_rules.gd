@@ -5,6 +5,7 @@ const LENGTHS: Array[int] = [5, 4, 4, 3, 2]
 var teams: Array = [[], []]
 var connected: Dictionary = {}
 var fleets: Array = [[], []]
+var confirmed: Array[Dictionary] = [{}, {}]
 var shots: Array[Dictionary] = []
 var targets: Array = [{}, {}]
 var scores: Dictionary[String, int] = {}
@@ -101,6 +102,14 @@ func act(player_id: String, action: Dictionary) -> bool:
 	if phase == "placement":
 		if action.get("team") != team:
 			return false
+		if confirmed[team].has(player_id):
+			return false
+		if kind == "confirm":
+			confirmed[team][player_id] = true
+			_check_confirmations()
+			if solo and phase == "placement":
+				solo_team = 1 - team
+			return true
 		if kind == "place":
 			for key: String in ["index", "x", "y"]:
 				if typeof(action.get(key)) != TYPE_INT:
@@ -130,6 +139,13 @@ func act(player_id: String, action: Dictionary) -> bool:
 	if solo and targets[1 - team].is_empty():
 		solo_team = 1 - team
 	return true
+
+func _check_confirmations() -> void:
+	for team: int in range(2):
+		for id: String in members(team):
+			if not confirmed[team].has(id):
+				return
+	begin_battle()
 
 func begin_battle() -> void:
 	phase = "battle"
@@ -226,6 +242,9 @@ func update_connections(players: Array[Dictionary]) -> void:
 		phase = "finished"
 		targets = [{}, {}]
 
+	elif phase == "placement":
+		_check_confirmations()
+
 func view(player_id: String) -> Dictionary:
 	var team: int = controlled_team(player_id)
 	var visible: Array = [[], []]
@@ -236,7 +255,7 @@ func view(player_id: String) -> Dictionary:
 				shown["sunk"] = is_sunk(board, ship)
 				visible[board].append(shown)
 	return {"phase": phase, "team": team, "teams": teams.duplicate(true), "solo": solo,
-		"fleets": visible, "turn_number": turn_number, "winner": winner,
+		"confirmed": team >= 0 and confirmed[team].has(player_id), "fleets": visible, "turn_number": turn_number, "winner": winner,
 		"shots": shots.duplicate(true), "targets": targets[team].duplicate() if team >= 0 else {},
 		"last_salvo": last_salvo.duplicate(true), "scores": scores.duplicate(),
 		"own_target": targets[team].get(player_id, -1) if team >= 0 else -1,

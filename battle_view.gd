@@ -16,6 +16,8 @@ const TargetMarker: PackedScene = preload("res://games/minigame/GP_battleship/vo
 @onready var _impacts: Node3D = %Impacts
 @onready var _marks: Node3D = %Marks
 @onready var _aim: MeshInstance3D = %Aim
+@onready var _confirm: Button = %ConfirmPlacement
+@onready var _health: Array[ProgressBar] = [%BlueHealth, %RedHealth]
 @onready var _clock: Label = $GameHUD/Status/RoundClock
 var _state: Dictionary = {}
 var _shown_fleets: Array = []
@@ -44,6 +46,9 @@ var _remaining: float = 0.0
 var host_clock: Callable
 
 func _ready() -> void:
+	_confirm.pressed.connect(func() -> void:
+		_cancel_move()
+		_send({"kind": "confirm"}))
 	_ghost_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_ghost_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_footprint.mesh = BoxMesh.new()
@@ -53,7 +58,9 @@ func _ready() -> void:
 	_footprint.hide()
 
 func show_state(value: Dictionary) -> void:
-	if _preview_team != value.team or value.phase != "placement":
+	_confirm.visible = value.phase == "placement" and value.team >= 0
+	_confirm.disabled = value.confirmed
+	if _preview_team != value.team or value.phase != "placement" or value.confirmed:
 		_cancel_move()
 	_preview_team = value.team
 	_state = value
@@ -77,6 +84,17 @@ func show_state(value: Dictionary) -> void:
 
 func _show_board() -> void:
 	var value: Dictionary = _state
+	var remaining: Array[int] = [0, 0]
+	for length: int in Rules.LENGTHS:
+		remaining[0] += length
+	remaining[1] = remaining[0]
+	for bar: ProgressBar in _health:
+		bar.max_value = remaining[0]
+	for shot: Dictionary in value.shots:
+		if shot.hit:
+			remaining[1 - shot.by] -= 1
+	for board: int in range(2):
+		_health[board].value = remaining[board]
 	if value.fleets != _shown_fleets:
 		_shown_fleets = value.fleets.duplicate(true)
 		_rebuild_ships()
@@ -244,7 +262,7 @@ func _preview_move() -> void:
 	if _hover_team != _state.team:
 		_aim.hide()
 		return
-	if not _carrying:
+	if not _carrying or _state.confirmed:
 		return
 	var source: ShipDisplay = _sources[_selected]
 	var length: int = Rules.LENGTHS[_selected]
@@ -299,7 +317,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_pick_cell(event.position)
 		if _hover < 0:
 			return
-		if _state.phase == "placement" and _hover_team == _state.team:
+		if _state.phase == "placement" and not _state.confirmed and _hover_team == _state.team:
 			var picked: int = _owned_ship_at_cursor()
 			if not _carrying and picked >= 0:
 				_selected = picked
