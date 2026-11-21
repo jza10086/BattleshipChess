@@ -3,6 +3,9 @@
 [ext_resource type="Texture2D" path="res://core/ui/ambient_reveal/icons/kenney_input/keyboard_mouse/mouse_left.svg" id="left"]
 [ext_resource type="Texture2D" path="res://core/ui/ambient_reveal/icons/kenney_input/keyboard_mouse/keyboard_r.svg" id="rotate"]
 [ext_resource type="PackedScene" path="res://games/assets/GP_default_ui/challenge_hud.tscn" id="clock_hud"]
+[ext_resource type="StyleBoxFlat" path="res://games/assets/GP_default_ui/source/ui/theme/monopoly_glass.tres" id="hud_glass"]
+[ext_resource type="StyleBoxFlat" path="res://core/ui/ambient_reveal/theme/frames/focused.tres" id="hud_focused"]
+[ext_resource type="StyleBoxFlat" path="res://core/ui/ambient_reveal/theme/frames/disabled.tres" id="hud_disabled"]
 
 [ext_resource type="FontFile" uid="uid://dkyy2j4pclhwa" path="res://games/minigame/GP_battleship/assets/fonts/SeaInterface.otf" id="1_slv5s"]
 [ext_resource type="Script" uid="uid://qdy2srjufvop" path="res://games/minigame/GP_battleship/battle_view.gd" id="2_nmmmd"]
@@ -11,37 +14,13 @@
 [ext_resource type="Texture2D" uid="uid://cv6aon6p1yai3" path="res://games/minigame/GP_battleship/assets/textures/ocean_fields.png" id="4_ne6w7"]
 
 [sub_resource type="StyleBoxFlat" id="hp_bg"]
-bg_color = Color(0.12, 0.13, 0.14, 1)
+bg_color = Color(0.12, 0.13, 0.14, 0.52)
 
 [sub_resource type="StyleBoxFlat" id="hp_blue"]
-bg_color = Color(0.22, 0.64, 1, 1)
+bg_color = Color(0.22, 0.64, 1, 0.62)
 
 [sub_resource type="StyleBoxFlat" id="hp_red"]
-bg_color = Color(1, 0.32, 0.24, 1)
-
-[sub_resource type="StyleBoxFlat" id="hud_panel"]
-bg_color = Color(0.055, 0.14, 0.17, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.65, 0.83, 0.83, 1)
-
-[sub_resource type="StyleBoxFlat" id="hud_hover"]
-bg_color = Color(0.10, 0.26, 0.30, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.84, 0.96, 0.95, 1)
-
-[sub_resource type="StyleBoxFlat" id="hud_pressed"]
-bg_color = Color(0.035, 0.09, 0.11, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.48, 0.70, 0.71, 1)
+bg_color = Color(1, 0.32, 0.24, 0.62)
 
 [sub_resource type="Theme" id="Theme_ico3i"]
 default_font = ExtResource("1_slv5s")
@@ -867,7 +846,7 @@ offset_top = 19.0
 [node name="RoundClock" parent="GameHUD/Status" index="0"]
 custom_minimum_size = Vector2(0, 64)
 vertical_alignment = 1
-theme_override_styles/normal = SubResource("hud_panel")
+theme_override_styles/normal = ExtResource("hud_glass")
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 40
 theme_override_constants/outline_size = 0
@@ -918,15 +897,15 @@ anchor_left = 0.5
 anchor_right = 0.5
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = -190.0
-offset_right = 190.0
+offset_left = -165.0
+offset_right = 165.0
 offset_top = -180.0
 offset_bottom = -94.0
 theme_override_font_sizes/font_size = 34
-theme_override_styles/normal = SubResource("hud_panel")
-theme_override_styles/hover = SubResource("hud_hover")
-theme_override_styles/pressed = SubResource("hud_pressed")
-theme_override_styles/disabled = SubResource("hud_pressed")
+theme_override_styles/normal = ExtResource("hud_glass")
+theme_override_styles/hover = ExtResource("hud_focused")
+theme_override_styles/pressed = ExtResource("hud_focused")
+theme_override_styles/disabled = ExtResource("hud_disabled")
 text = "布阵完毕"
 
 [node name="KeyHints" type="VBoxContainer" parent="GameHUD"]
