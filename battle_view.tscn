@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" path="res://core/ui/ambient_reveal/icons/kenney_input/keyboard_mouse/mouse_left.svg" id="left"]
 [ext_resource type="Texture2D" path="res://core/ui/ambient_reveal/icons/kenney_input/keyboard_mouse/keyboard_r.svg" id="rotate"]
 [ext_resource type="PackedScene" path="res://games/assets/GP_default_ui/challenge_hud.tscn" id="clock_hud"]
-[ext_resource type="StyleBoxFlat" path="res://games/assets/GP_default_ui/source/ui/theme/monopoly_glass.tres" id="hud_glass"]
+[ext_resource type="StyleBoxFlat" path="res://games/assets/GP_default_ui/theme/glass_panel.tres" id="hud_glass"]
 [ext_resource type="StyleBoxFlat" path="res://core/ui/ambient_reveal/theme/frames/focused.tres" id="hud_focused"]
 [ext_resource type="StyleBoxFlat" path="res://core/ui/ambient_reveal/theme/frames/disabled.tres" id="hud_disabled"]
 
