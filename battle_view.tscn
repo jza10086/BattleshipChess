@@ -2,7 +2,6 @@
 [ext_resource type="PackedScene" path="res://core/ui/ambient_reveal/components/navigation/action_prompt.tscn" id="prompt"]
 [ext_resource type="Texture2D" path="res://core/ui/ambient_reveal/icons/kenney_input/keyboard_mouse/mouse_left.svg" id="left"]
 [ext_resource type="Texture2D" path="res://core/ui/ambient_reveal/icons/kenney_input/keyboard_mouse/keyboard_r.svg" id="rotate"]
-[ext_resource type="PackedScene" path="res://games/assets/GP_default_ui/challenge_hud.tscn" id="clock_hud"]
 [ext_resource type="StyleBoxFlat" path="res://games/assets/GP_default_ui/theme/glass_panel.tres" id="hud_glass"]
 [ext_resource type="StyleBoxFlat" path="res://core/ui/ambient_reveal/theme/frames/focused.tres" id="hud_focused"]
 [ext_resource type="StyleBoxFlat" path="res://core/ui/ambient_reveal/theme/frames/disabled.tres" id="hud_disabled"]
@@ -833,30 +832,27 @@ font = ExtResource("1_slv5s")
 font_size = 38
 
 
-[node name="GameHUD" parent="." instance=ExtResource("clock_hud")]
+[node name="GameHUD" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
+layer = -1
 
-[node name="Status" parent="GameHUD" index="0"]
+[node name="Status" type="VBoxContainer" parent="GameHUD"]
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -57.0
 offset_right = 57.0
 offset_top = 19.0
+mouse_filter = 2
 
-[node name="RoundClock" parent="GameHUD/Status" index="0"]
+[node name="RoundClock" type="Label" parent="GameHUD/Status"]
 custom_minimum_size = Vector2(0, 64)
-vertical_alignment = 1
+mouse_filter = 2
 theme_override_styles/normal = ExtResource("hud_glass")
-horizontal_alignment = 1
 theme_override_font_sizes/font_size = 40
 theme_override_constants/outline_size = 0
 text = ""
-
-[node name="RankingsToggle" parent="GameHUD/Status" index="1"]
-visible = false
-
-[node name="MenuHint" parent="GameHUD" index="1"]
-visible = false
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="BlueHealth" type="ProgressBar" parent="GameHUD"]
 unique_name_in_owner = true
@@ -930,5 +926,3 @@ alignment = 2
 action = &""
 description = "旋转"
 keyboard_icons = Array[Texture2D]([ExtResource("rotate")])
-
-[editable path="GameHUD"]
